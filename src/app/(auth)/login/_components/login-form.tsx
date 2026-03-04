@@ -50,7 +50,7 @@ export function LoginForm() {
   const [obfuscatePassword, setObfuscatePassword] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackURL = searchParams.get('callbackUrl') ?? searchParams.get('continue') ?? '/dashboard';
+  const callbackURL = searchParams.get('callbackUrl') ?? searchParams.get('continue') ?? '/';
 
   const form = useForm<LoginFormSchema>({
     defaultValues: {
@@ -65,6 +65,11 @@ export function LoginForm() {
     enabled: false,
     queryFn: () => authClient.signIn.passkey({
       autoFill: true,
+      fetchOptions: {
+        onSuccess() {
+          router.push(callbackURL);
+        },
+      },
     }),
     queryKey: ['passkey'],
   });
