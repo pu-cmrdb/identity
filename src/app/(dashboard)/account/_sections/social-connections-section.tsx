@@ -42,9 +42,11 @@ export function SocialConnectionsSection() {
   return (
     <section className="space-y-2">
       <h2 className="text-lg font-bold">社交連繫</h2>
+
       <p className="text-muted-foreground">
         連結社交帳號後，可直接使用第三方帳號登入，無需輸入密碼
       </p>
+
       <div className="my-4">
         {!accounts
           ? <Spinner />
@@ -57,9 +59,11 @@ export function SocialConnectionsSection() {
                   "
                   />
                 </ItemMedia>
+
                 <ItemContent>
                   <ItemTitle>Discord</ItemTitle>
                 </ItemContent>
+
                 <ItemActions>
                   {hasDiscordLinked
                     ? (

@@ -21,8 +21,10 @@ export function DashboardSidebar() {
                       src="/iam.png"
                       width={36}
                     />
+
                     <div className="flex flex-col">
                       <span className="text-xs text-muted-foreground">行雲者研發基地</span>
+
                       <span className="text-base">身份管理系統</span>
                     </div>
                   </Link>
@@ -32,6 +34,7 @@ export function DashboardSidebar() {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
+
         <SidebarMain />
       </SidebarContent>
     </Sidebar>

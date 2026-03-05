@@ -73,10 +73,12 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
           </Button>
         )}
       />
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>建立密碼金鑰</DialogTitle>
         </DialogHeader>
+
         <form onSubmit={onSubmit}>
           <FieldSet>
             <FieldGroup>
@@ -86,6 +88,7 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>名稱*</FieldLabel>
+
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
@@ -96,14 +99,17 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
                       required
                       type="text"
                     />
+
                     <FieldDescription>
                       為這個密碼金鑰取一個有意義的名稱，例如裝置名稱
                     </FieldDescription>
+
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
               />
             </FieldGroup>
+
             <FieldGroup>
               <DialogFooter className="sm:justify-between">
                 <DialogClose
@@ -111,6 +117,7 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
                     <Button disabled={form.formState.isSubmitting} type="button" variant="outline">取消</Button>
                   }
                 />
+
                 <Button disabled={form.formState.isSubmitting} type="submit">建立</Button>
               </DialogFooter>
             </FieldGroup>

@@ -41,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             {children}
           </TRPCReactProvider>
         </TooltipProvider>
+
         <Toaster />
       </body>
     </html>

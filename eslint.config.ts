@@ -79,6 +79,7 @@ export default defineConfig(
       '@typescript-eslint/restrict-template-expressions': 'off',
       'perfectionist/sort-imports': 'off',
       'perfectionist/sort-named-imports': 'off',
+      'react/jsx-newline': 'warn',
     },
   },
 );

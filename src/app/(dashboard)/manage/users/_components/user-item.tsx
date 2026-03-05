@@ -17,18 +17,23 @@ export function UserItem({ user }: UserItemProps) {
       <ItemMedia>
         <Avatar className="size-10">
           <GravatarImage email={user.email} />
+
           <AvatarFallback>{user.name[0]}</AvatarFallback>
         </Avatar>
       </ItemMedia>
+
       <ItemContent>
         <ItemTitle>
           {user.displayUsername ?? user.username}
+
           <span className="font-normal text-muted-foreground">{user.name}</span>
         </ItemTitle>
+
         <ItemDescription>
           {user.email}
         </ItemDescription>
       </ItemContent>
+
       <ItemActions>
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -38,11 +43,13 @@ export function UserItem({ user }: UserItemProps) {
               </Button>
             )}
           />
+
           <DropdownMenuContent>
             <DropdownMenuItem>
               <PencilIcon />
               編輯
             </DropdownMenuItem>
+
             <DropdownMenuItem variant="destructive">
               <Trash2Icon />
               刪除

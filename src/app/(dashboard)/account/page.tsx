@@ -12,8 +12,11 @@ export default function DashboardProfilePage() {
     >
       <div className="space-y-12 p-4">
         <h1 className="text-2xl">帳號資訊</h1>
+
         <ProfileSection />
+
         <SocialConnectionsSection />
+
         <PasskeysSection />
       </div>
     </div>

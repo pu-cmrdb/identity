@@ -57,19 +57,24 @@ export function ProfileSection() {
   return (
     <section className="space-y-2">
       <h2 className="text-lg font-bold">個人檔案</h2>
+
       <p className="text-muted-foreground">
         管理你的顯示名稱與頭像
       </p>
+
       <form onSubmit={onSubmit}>
         <FieldSet className="my-8">
           <FieldGroup>
             <Field orientation="vertical">
               <FieldLabel>使用者頭像</FieldLabel>
+
               <FieldContent className="flex-row gap-8 py-4">
                 <Avatar className="size-24">
                   <GravatarImage email={user.email} />
+
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
+
                 <div
                   className="flex flex-col items-start justify-center gap-2"
                 >
@@ -88,10 +93,13 @@ export function ProfileSection() {
               </FieldContent>
             </Field>
           </FieldGroup>
+
           <FieldSeparator />
+
           <FieldGroup>
             <Field>
               <FieldLabel>帳號名稱</FieldLabel>
+
               <Input
                 autoComplete="username"
                 data-1p-ignore
@@ -101,8 +109,10 @@ export function ProfileSection() {
                 value={user.name}
               />
             </Field>
+
             <Field>
               <FieldLabel>電子郵件</FieldLabel>
+
               <Input
                 autoComplete="username"
                 data-1p-ignore
@@ -112,12 +122,14 @@ export function ProfileSection() {
                 value={user.email}
               />
             </Field>
+
             <Controller
               control={form.control}
               name="displayUsername"
               render={({ field, fieldState }) => (
                 <Field>
                   <FieldLabel htmlFor={field.name}>顯示名稱</FieldLabel>
+
                   <Input
                     aria-invalid={fieldState.invalid}
                     autoComplete="name"
@@ -128,11 +140,13 @@ export function ProfileSection() {
                     type="text"
                     {...field}
                   />
+
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
             />
           </FieldGroup>
+
           <FieldGroup>
             <Field orientation="horizontal">
               <Button type="submit">

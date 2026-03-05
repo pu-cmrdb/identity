@@ -85,10 +85,12 @@ export function CreateUserButton() {
           </Button>
         )}
       />
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>建立使用者</DialogTitle>
         </DialogHeader>
+
         <form onSubmit={onSubmit}>
           <FieldSet>
             <FieldGroup>
@@ -102,6 +104,7 @@ export function CreateUserButton() {
                   return (
                     <Field>
                       <FieldLabel htmlFor={field.name}>名稱*</FieldLabel>
+
                       <Input
                         {...field}
                         aria-invalid={fieldState.invalid}
@@ -111,26 +114,33 @@ export function CreateUserButton() {
                         required
                         type="text"
                       />
+
                       {normalized !== value && (
                         <Alert variant="warning">
                           <TriangleAlertIcon />
+
                           <AlertDescription>
                             將會以
                             {' '}
+
                             {normalized}
+
                             {' '}
                             作為使用者名稱
                           </AlertDescription>
                         </Alert>
                       )}
+
                       <FieldDescription>
                         使用者名稱可以用於登入，只能包含小寫字母、數字和底線。
                       </FieldDescription>
+
                       {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
                   );
                 }}
               />
+
               <Controller
                 control={form.control}
                 name="displayUsername"
@@ -139,6 +149,7 @@ export function CreateUserButton() {
                     <FieldLabel htmlFor={field.name}>
                       顯示名稱
                     </FieldLabel>
+
                     <Input
                       aria-invalid={fieldState.invalid}
                       autoComplete="name"
@@ -148,16 +159,19 @@ export function CreateUserButton() {
                       type="text"
                       {...field}
                     />
+
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
               />
+
               <Controller
                 control={form.control}
                 name="email"
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>電子郵件*</FieldLabel>
+
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
@@ -167,16 +181,19 @@ export function CreateUserButton() {
                       required
                       type="email"
                     />
+
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
               />
+
               <Controller
                 control={form.control}
                 name="password"
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel htmlFor={field.name}>密碼*</FieldLabel>
+
                     <ButtonGroup>
                       <Input
                         {...field}
@@ -186,6 +203,7 @@ export function CreateUserButton() {
                         required
                         type="text"
                       />
+
                       <Button
                         onClick={() => {
                           form.setValue('password', generatePassword());
@@ -194,17 +212,21 @@ export function CreateUserButton() {
                         variant="outline"
                       >
                         <DicesIcon />
+
                         <span>
                           隨機
                         </span>
                       </Button>
                     </ButtonGroup>
+
                     <FieldDescription>密碼必須至少 8 個字元</FieldDescription>
+
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>
                 )}
               />
             </FieldGroup>
+
             <FieldGroup>
               <DialogFooter className="sm:justify-between">
                 <DialogClose
@@ -212,6 +234,7 @@ export function CreateUserButton() {
                     <Button type="button" variant="outline">取消</Button>
                   }
                 />
+
                 <Button type="submit">建立</Button>
               </DialogFooter>
             </FieldGroup>

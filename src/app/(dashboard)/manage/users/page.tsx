@@ -28,15 +28,18 @@ export default function DashboardManageUsersPage() {
     >
       <div className="space-y-4 p-4">
         <h1 className="text-2xl">管理使用者</h1>
+
         <div className="flex items-center justify-between">
           <div>
             {(isPending || !data) ? <Spinner /> : `共有 ${data.pages[0]?.meta.totalItems} 個使用者`}
           </div>
+
           <div>
             <CreateUserButton />
           </div>
         </div>
       </div>
+
       <div>
         {data?.pages.map((page) =>
           page.data.map((user) => <UserItem key={user.id} user={user} />),

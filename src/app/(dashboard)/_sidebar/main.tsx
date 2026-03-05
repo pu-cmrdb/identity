@@ -16,6 +16,7 @@ export function SidebarMain() {
     <>
       <SidebarGroup>
         <SidebarGroupLabel>{user.name}</SidebarGroupLabel>
+
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -28,6 +29,7 @@ export function SidebarMain() {
               )}
             />
           </SidebarMenuItem>
+
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname === '/applications'}
@@ -41,8 +43,10 @@ export function SidebarMain() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarGroup>
+
       <SidebarGroup>
         <SidebarGroupLabel>行雲者研發基地</SidebarGroupLabel>
+
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -55,6 +59,7 @@ export function SidebarMain() {
               )}
             />
           </SidebarMenuItem>
+
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname === '/manage/applications'}

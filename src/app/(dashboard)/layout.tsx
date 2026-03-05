@@ -20,6 +20,7 @@ export default async function DashboardLayout({ children }: LayoutProps<'/'>) {
     <SessionProvider session={session}>
       <SidebarProvider>
         <DashboardSidebar />
+
         <main className="w-full">
           {children}
         </main>
