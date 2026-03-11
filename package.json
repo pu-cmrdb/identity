@@ -11,7 +11,7 @@
     "lint": "ESLINT_FORMAT=false eslint src",
     "lint:fix": "eslint --fix",
     "preview": "next build && next start",
-    "start": "next start",
+    "start": "bun run .next/standalone/server.js",
     "typecheck": "tsc --noEmit",
     "db:seed": "bun src/server/database/seed.ts",
     "db:generate": "bun run auth:generate && bun run drizzle:generate",
