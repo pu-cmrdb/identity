@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { LoginForm } from './_components/login-form';
@@ -21,7 +23,9 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
-          <LoginForm />
+          <Suspense>
+            <LoginForm />
+          </Suspense>
         </CardContent>
       </Card>
     </div>

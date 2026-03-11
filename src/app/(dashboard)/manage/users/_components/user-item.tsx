@@ -2,9 +2,8 @@ import { EllipsisVerticalIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { GravatarImage } from '@/components/gravatar';
 import { schema } from '@/server/database';
 
 type UserItemProps = Readonly<{
@@ -16,7 +15,7 @@ export function UserItem({ user }: UserItemProps) {
     <Item>
       <ItemMedia>
         <Avatar className="size-10">
-          <GravatarImage email={user.email} />
+          <AvatarImage draggable={false} src={`/api/user/${user.id}/image`} />
 
           <AvatarFallback>{user.name[0]}</AvatarFallback>
         </Avatar>

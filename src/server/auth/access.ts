@@ -1,6 +1,8 @@
-import { LucideIcon, ShieldUserIcon, User2Icon } from 'lucide-react';
 import { adminAc, defaultStatements, userAc } from 'better-auth/plugins/admin/access';
+import { ShieldUserIcon, User2Icon } from 'lucide-react';
 import { createAccessControl } from 'better-auth/plugins';
+
+import type { LucideIcon } from 'lucide-react';
 
 export const ac = createAccessControl({
   ...defaultStatements,

@@ -4,7 +4,7 @@ import { createContext, useContext } from 'react';
 
 import type { Session } from '@/server/auth';
 
-const SessionContext = createContext<Session | undefined>();
+const SessionContext = createContext<Session | undefined>(undefined);
 
 type SessionProviderProps = Readonly<{
   children: React.ReactNode;

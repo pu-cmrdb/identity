@@ -4,7 +4,9 @@ import { eq } from 'drizzle-orm';
 import { db, schema } from '@/server/database';
 import { hashEmail } from '@/lib/utils';
 
-export async function GET({ params }: RouteContext<'/api/user/[id]/image'>) {
+import type { NextRequest } from 'next/server';
+
+export async function GET(request: NextRequest, { params }: RouteContext<'/api/user/[id]/image'>) {
   const { id: userId } = await params;
 
   const result = await db.query.users.findFirst({
