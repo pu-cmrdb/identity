@@ -1,0 +1,40 @@
+{
+  "languages": {
+    "TypeScript": {
+      "format_on_save": "on",
+      "formatter": [
+        {
+          "external": {
+            "command": "scripts/format.sh",
+            "arguments": ["{buffer_path}"],
+          },
+        },
+        { "code_action": "source.fixAll.eslint" },
+      ],
+    },
+    "TSX": {
+      "format_on_save": "on",
+      "formatter": [
+        {
+          "external": {
+            "command": "scripts/format.sh",
+            "arguments": ["{buffer_path}"],
+          },
+        },
+        { "code_action": "source.fixAll.eslint" },
+      ],
+    },
+    "JavaScript": {
+      "format_on_save": "on",
+      "formatter": [
+        {
+          "external": {
+            "command": "scripts/format.sh",
+            "arguments": ["{buffer_path}"],
+          },
+        },
+        { "code_action": "source.fixAll.eslint" },
+      ],
+    },
+  },
+}

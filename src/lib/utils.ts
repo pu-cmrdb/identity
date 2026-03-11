@@ -19,3 +19,18 @@ import type { ClassValue } from 'clsx';
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+/**
+ * 使用 SHA-256 雜湊電子郵件地址
+ *
+ * @param email - 要雜湊的電子郵件地址
+ * @returns SHA-256 雜湊值的十六進制字串
+ */
+export async function hashEmail(email: string): Promise<string> {
+  const normalized = email.trim().toLowerCase();
+  const encoder = new TextEncoder();
+  const data = encoder.encode(normalized);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}

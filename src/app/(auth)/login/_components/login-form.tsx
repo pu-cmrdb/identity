@@ -156,7 +156,7 @@ export function LoginForm() {
             control={form.control}
             name="identifier"
             render={({ field, fieldState }) => (
-              <Field>
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>
                   電子郵件或使用者名稱
                 </FieldLabel>
@@ -236,9 +236,7 @@ export function LoginForm() {
           >
             {isSignInPending ? <Spinner /> : null}
 
-            <span>
-              登入
-            </span>
+            <span>登入</span>
           </Button>
         </Field>
 

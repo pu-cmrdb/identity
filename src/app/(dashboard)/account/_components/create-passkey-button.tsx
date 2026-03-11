@@ -86,7 +86,7 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
                 control={form.control}
                 name="name"
                 render={({ field, fieldState }) => (
-                  <Field>
+                  <Field data-disabled={form.formState.isSubmitting} data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>名稱*</FieldLabel>
 
                     <Input

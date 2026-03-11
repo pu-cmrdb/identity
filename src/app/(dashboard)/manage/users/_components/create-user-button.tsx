@@ -102,7 +102,7 @@ export function CreateUserButton() {
                   const normalized = normalizeUsername(value);
 
                   return (
-                    <Field>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel htmlFor={field.name}>名稱*</FieldLabel>
 
                       <Input
@@ -145,7 +145,7 @@ export function CreateUserButton() {
                 control={form.control}
                 name="displayUsername"
                 render={({ field, fieldState }) => (
-                  <Field>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>
                       顯示名稱
                     </FieldLabel>
@@ -169,7 +169,7 @@ export function CreateUserButton() {
                 control={form.control}
                 name="email"
                 render={({ field, fieldState }) => (
-                  <Field>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>電子郵件*</FieldLabel>
 
                     <Input
@@ -191,7 +191,7 @@ export function CreateUserButton() {
                 control={form.control}
                 name="password"
                 render={({ field, fieldState }) => (
-                  <Field>
+                  <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>密碼*</FieldLabel>
 
                     <ButtonGroup>

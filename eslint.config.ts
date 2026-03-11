@@ -6,11 +6,16 @@ import nextTs from 'eslint-config-next/typescript';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import perfectionist from 'eslint-plugin-perfectionist';
 import prettyImport from '@kamiya4047/eslint-plugin-pretty-import';
+import shadcn from 'eslint-plugin-shadcn';
 import stylistic from '@stylistic/eslint-plugin';
 import tailwindcss from 'eslint-plugin-better-tailwindcss';
 import typescript from 'typescript-eslint';
 
-export default defineConfig(
+import type { ConfigWithExtendsArray } from '@eslint/config-helpers';
+
+const isFormatting = Boolean(process.env.ESLINT_FORMAT);
+
+const configs: ConfigWithExtendsArray = [
   ...nextVitals,
   ...nextTs,
   globalIgnores([
@@ -35,6 +40,7 @@ export default defineConfig(
   javascript.configs.recommended,
   typescript.configs.recommendedTypeChecked,
   typescript.configs.stylisticTypeChecked,
+  shadcn.configs['base-recommended-warn'],
   stylistic.configs.customize({
     arrowParens: true,
     semi: true,
@@ -43,9 +49,7 @@ export default defineConfig(
   prettyImport.configs.warn,
   perfectionist.configs['recommended-alphabetical'],
   {
-    plugins: {
-      drizzle,
-    },
+    plugins: { drizzle },
     rules: {
       'drizzle/enforce-delete-with-where': [
         'error',
@@ -82,4 +86,19 @@ export default defineConfig(
       'react/jsx-newline': 'warn',
     },
   },
-);
+];
+
+if (isFormatting) configs.push(
+  {
+    name: 'formatting',
+    rules: {
+      ...Object.fromEntries(nextTs.flatMap((v) => Object.keys(v.rules ?? {}).map((rule) => [rule, 'off']))),
+      ...Object.fromEntries(nextVitals.flatMap((v) => Object.keys(v.rules ?? {}).map((rule) => [rule, 'off']))),
+      ...typescript.configs.disableTypeChecked.rules,
+      'react-hooks/component-hook-factories': 'off',
+      'react-hooks/static-components': 'off',
+      'react-hooks/use-memo': 'off',
+    },
+  });
+
+export default defineConfig(configs);

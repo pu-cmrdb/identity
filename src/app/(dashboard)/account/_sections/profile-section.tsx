@@ -10,9 +10,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 
 import { Field, FieldContent, FieldError, FieldGroup, FieldLabel, FieldSeparator, FieldSet } from '@/components/ui/field';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { GravatarImage } from '@/components/gravatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
@@ -70,7 +69,7 @@ export function ProfileSection() {
 
               <FieldContent className="flex-row gap-8 py-4">
                 <Avatar className="size-24">
-                  <GravatarImage email={user.email} />
+                  <AvatarImage draggable={false} src={`/api/user/${user.id}/image`} />
 
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
@@ -79,16 +78,15 @@ export function ProfileSection() {
                   className="flex flex-col items-start justify-center gap-2"
                 >
                   在 Gravatar 上變更你的使用者頭像
-                  <Button
-                    nativeButton={false}
-                    render={(
-                      <Link href="https://gravatar.com/profile/avatars" referrerPolicy="no-referrer" target="_blank">
-                        前往 Gravatar
-                        <ExternalLinkIcon />
-                      </Link>
-                    )}
-                    variant="outline"
-                  />
+                  <Link
+                    className={buttonVariants({ variant: 'outline' })}
+                    href="https://gravatar.com/profile/avatars"
+                    referrerPolicy="no-referrer"
+                    target="_blank"
+                  >
+                    前往 Gravatar
+                    <ExternalLinkIcon />
+                  </Link>
                 </div>
               </FieldContent>
             </Field>
@@ -97,7 +95,7 @@ export function ProfileSection() {
           <FieldSeparator />
 
           <FieldGroup>
-            <Field>
+            <Field data-disabled>
               <FieldLabel>帳號名稱</FieldLabel>
 
               <Input
@@ -110,7 +108,7 @@ export function ProfileSection() {
               />
             </Field>
 
-            <Field>
+            <Field data-disabled>
               <FieldLabel>電子郵件</FieldLabel>
 
               <Input
@@ -127,7 +125,7 @@ export function ProfileSection() {
               control={form.control}
               name="displayUsername"
               render={({ field, fieldState }) => (
-                <Field>
+                <Field data-disabled={form.formState.isSubmitting} data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name}>顯示名稱</FieldLabel>
 
                   <Input

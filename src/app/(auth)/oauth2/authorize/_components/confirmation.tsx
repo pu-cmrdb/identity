@@ -7,7 +7,6 @@ import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { GravatarImage } from '@/components/gravatar';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
@@ -69,7 +68,7 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
           <EllipsisIcon className="text-muted-foreground/60" />
 
           <Avatar className="size-16">
-            <GravatarImage draggable={false} email={session.user.email} />
+            <AvatarImage draggable={false} src={`/api/user/${session.user.id}/image`} />
 
             <AvatarFallback>
               {session.user.name[0]}

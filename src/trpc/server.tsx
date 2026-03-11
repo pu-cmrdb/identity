@@ -1,8 +1,8 @@
 import 'server-only';
 
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
-import { createHydrationHelpers, createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { cache } from 'react';
+import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { headers } from 'next/headers';
 
 import { appRouter } from '@/server/api/root';
