@@ -8,7 +8,7 @@
  */
 
 import { TRPCError, initTRPC } from '@trpc/server';
-import { ZodError } from 'zod';
+import { ArkErrors } from 'arktype';
 
 import superjson from 'superjson';
 
@@ -51,8 +51,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
+        validationError:
+          error.cause instanceof ArkErrors ? error.cause.flatByPath : null,
       },
     };
   },

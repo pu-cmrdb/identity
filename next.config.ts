@@ -7,6 +7,9 @@ const config: NextConfig = {
     unoptimized: true,
   },
   output: 'standalone',
+  typescript: {
+    tsconfigPath: './tsconfig.app.json',
+  },
 };
 
 export default config;
