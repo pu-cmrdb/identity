@@ -59,7 +59,15 @@ export function CreateUserButton() {
   };
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    const result = await authClient.admin.createUser(data);
+    const result = await authClient.admin.createUser({
+      data: {
+        displayUsername: data.displayUsername,
+        username: data.name,
+      },
+      email: data.email,
+      name: data.name,
+      password: data.password,
+    });
 
     if (result.error) {
       toast.error('建立使用者時發生錯誤', {
@@ -69,6 +77,7 @@ export function CreateUserButton() {
     }
 
     await queryClient.invalidateQueries({ queryKey: trpc.users.list.infiniteQueryKey() });
+
     onOpenChange(false);
     toast.success('使用者建立成功');
   });
