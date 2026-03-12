@@ -19,18 +19,26 @@ export function ApplicationGrid() {
 
   if (isPending) {
     return (
-      <Spinner />
+      <Empty>
+        <EmptyMedia>
+          <Spinner className="size-8" />
+        </EmptyMedia>
+
+        <EmptyHeader>
+          <EmptyDescription>載入中，請稍候...</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
   if (error) {
     return (
       <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <CircleXIcon />
-          </EmptyMedia>
+        <EmptyMedia variant="icon">
+          <CircleXIcon />
+        </EmptyMedia>
 
+        <EmptyHeader>
           <EmptyTitle>無法載入應用程式</EmptyTitle>
 
           <EmptyDescription>{error.message}</EmptyDescription>
@@ -42,14 +50,14 @@ export function ApplicationGrid() {
   if (!data?.length) {
     return (
       <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <ShapesIcon />
-          </EmptyMedia>
+        <EmptyMedia variant="icon">
+          <ShapesIcon />
+        </EmptyMedia>
 
+        <EmptyHeader>
           <EmptyTitle>無應用程式</EmptyTitle>
 
-          <EmptyDescription>你還沒有任何應用程式，點擊建立應用程式來新增一個</EmptyDescription>
+          <EmptyDescription>你還沒有任何應用程式，點擊建立來創建一個</EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
