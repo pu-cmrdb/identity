@@ -79,7 +79,7 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
         <CardHeader className="text-center">
           <CardTitle className="text-xl">{clientName}</CardTitle>
 
-          <CardDescription className="text-base">想要存取您的帳戶</CardDescription>
+          <CardDescription className="text-base">想要存取你的帳號</CardDescription>
 
           <div className="text-sm text-muted-foreground/60">
             以

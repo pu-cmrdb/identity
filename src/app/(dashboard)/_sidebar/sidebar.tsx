@@ -7,7 +7,7 @@ import { SidebarMain } from './main';
 
 export function DashboardSidebar() {
   return (
-    <Sidebar variant="floating">
+    <Sidebar>
       <SidebarContent>
         <SidebarHeader>
           <SidebarMenu>

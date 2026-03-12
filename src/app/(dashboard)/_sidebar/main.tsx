@@ -20,7 +20,7 @@ export function SidebarMain() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname === '/account'}
+              isActive={pathname.startsWith('/account')}
               render={(
                 <Link href="/account">
                   <UserIcon />
@@ -32,7 +32,7 @@ export function SidebarMain() {
 
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname === '/applications'}
+              isActive={pathname.startsWith('/applications')}
               render={(
                 <Link href="/applications">
                   <ShapesIcon />
@@ -50,7 +50,7 @@ export function SidebarMain() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname === '/manage/users'}
+              isActive={pathname.startsWith('/manage/users')}
               render={(
                 <Link href="/manage/users">
                   <UsersIcon />

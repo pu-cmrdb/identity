@@ -15,6 +15,7 @@ import { generatePassword, normalizeUsername } from '@/server/auth/utils';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
 import { useTRPC } from '@/trpc/react';
 
@@ -111,13 +112,17 @@ export function CreateUserButton() {
                   const normalized = normalizeUsername(value);
 
                   return (
-                    <Field data-invalid={fieldState.invalid}>
+                    <Field
+                      data-disabled={form.formState.isSubmitting}
+                      data-invalid={fieldState.invalid}
+                    >
                       <FieldLabel htmlFor={field.name}>名稱*</FieldLabel>
 
                       <Input
                         {...field}
                         aria-invalid={fieldState.invalid}
                         data-1p-ignore
+                        disabled={form.formState.isSubmitting}
                         id={field.name}
                         placeholder="xiaoming"
                         required
@@ -154,7 +159,10 @@ export function CreateUserButton() {
                 control={form.control}
                 name="displayUsername"
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
+                  <Field
+                    data-disabled={form.formState.isSubmitting}
+                    data-invalid={fieldState.invalid}
+                  >
                     <FieldLabel htmlFor={field.name}>
                       顯示名稱
                     </FieldLabel>
@@ -163,6 +171,7 @@ export function CreateUserButton() {
                       aria-invalid={fieldState.invalid}
                       autoComplete="name"
                       data-1p-ignore
+                      disabled={form.formState.isSubmitting}
                       id={field.name}
                       placeholder="王小明"
                       type="text"
@@ -178,13 +187,17 @@ export function CreateUserButton() {
                 control={form.control}
                 name="email"
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
+                  <Field
+                    data-disabled={form.formState.isSubmitting}
+                    data-invalid={fieldState.invalid}
+                  >
                     <FieldLabel htmlFor={field.name}>電子郵件*</FieldLabel>
 
                     <Input
                       {...field}
                       aria-invalid={fieldState.invalid}
                       data-1p-ignore
+                      disabled={form.formState.isSubmitting}
                       id={field.name}
                       placeholder="wang@example.com"
                       required
@@ -200,7 +213,10 @@ export function CreateUserButton() {
                 control={form.control}
                 name="password"
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
+                  <Field
+                    data-disabled={form.formState.isSubmitting}
+                    data-invalid={fieldState.invalid}
+                  >
                     <FieldLabel htmlFor={field.name}>密碼*</FieldLabel>
 
                     <ButtonGroup>
@@ -208,6 +224,7 @@ export function CreateUserButton() {
                         {...field}
                         aria-invalid={fieldState.invalid}
                         data-1p-ignore
+                        disabled={form.formState.isSubmitting}
                         id={field.name}
                         required
                         type="text"
@@ -239,12 +256,24 @@ export function CreateUserButton() {
             <FieldGroup>
               <DialogFooter className="sm:justify-between">
                 <DialogClose
-                  render={
-                    <Button type="button" variant="outline">取消</Button>
-                  }
+                  render={(
+                    <Button
+                      disabled={form.formState.isSubmitting}
+                      type="button"
+                      variant="outline"
+                    >
+                      取消
+                    </Button>
+                  )}
                 />
 
-                <Button type="submit">建立</Button>
+                <Button
+                  disabled={form.formState.isSubmitting || !form.formState.isValid}
+                  type="submit"
+                >
+                  {form.formState.isSubmitting && <Spinner />}
+                  建立
+                </Button>
               </DialogFooter>
             </FieldGroup>
           </FieldSet>
