@@ -50,7 +50,9 @@ export function LoginForm() {
   const [obfuscatePassword, setObfuscatePassword] = useState(true);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackURL = searchParams.get('callbackUrl') ?? searchParams.get('continue') ?? '/';
+  const callbackURL = searchParams.has('sig')
+    ? `/api/auth/oauth2/authorize?${searchParams.toString()}`
+    : searchParams.get('callbackUrl') ?? searchParams.get('continue') ?? '/';
 
   const form = useForm<LoginFormSchema>({
     defaultValues: {
