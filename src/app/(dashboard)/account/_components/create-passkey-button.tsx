@@ -50,9 +50,8 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
     });
 
     if (result.error) {
-      toast.error('建立密碼金鑰時發生錯誤', {
-        description: result.error.message,
-      });
+      toast.error('建立密碼金鑰時發生錯誤');
+      console.error(result.error);
       return;
     }
 

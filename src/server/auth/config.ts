@@ -1,4 +1,5 @@
 import { admin, jwt, openAPI, username } from 'better-auth/plugins';
+import { apiKey } from '@better-auth/api-key';
 import { auditLog } from 'better-auth-audit-logs';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
@@ -49,6 +50,15 @@ export const auth = betterAuth({
     }),
     username({
       usernameNormalization: normalizeUsername,
+    }),
+    apiKey({
+      defaultPrefix: 'cmrdb_',
+      enableSessionForAPIKeys: true,
+      rateLimit: {
+        enabled: true,
+        maxRequests: 1000,
+        timeWindow: 1000 * 60 * 60, // 1 hour
+      },
     }),
     passkey(),
     jwt(),

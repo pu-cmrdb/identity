@@ -17,22 +17,34 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="
+          grid gap-6
+          sm:grid-cols-2
+        "
+        >
           <Link
+            className="
+              space-y-2 rounded-lg border p-6 transition-colors
+              hover:bg-muted/50
+            "
             href="/account"
-            className="rounded-lg border p-6 space-y-2 hover:bg-muted/50 transition-colors"
           >
             <h2 className="text-lg font-medium">帳號資訊</h2>
+
             <p className="text-sm text-muted-foreground">
               更新個人資料、管理社群帳號連結，以及設定密碼金鑰等登入方式。
             </p>
           </Link>
 
           <Link
+            className="
+              space-y-2 rounded-lg border p-6 transition-colors
+              hover:bg-muted/50
+            "
             href="/applications"
-            className="rounded-lg border p-6 space-y-2 hover:bg-muted/50 transition-colors"
           >
             <h2 className="text-lg font-medium">我的應用程式</h2>
+
             <p className="text-sm text-muted-foreground">
               建立並管理您的 OAuth 應用程式，讓其他服務透過您的帳號進行授權登入。
             </p>

@@ -10,7 +10,7 @@ import { createTRPCContext } from '@/server/api/trpc';
 
 import { createQueryClient } from './query-client';
 
-import type { TRPCQueryOptions } from '@trpc/tanstack-react-query';
+import type { ResolverDef, TRPCInfiniteQueryOptions, TRPCQueryOptions } from '@trpc/tanstack-react-query';
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -42,14 +42,14 @@ export function HydrateClient(props: { children: React.ReactNode }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- expected any
-export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
-  queryOptions: T,
+export function prefetch(
+  queryOptions: ReturnType<TRPCQueryOptions<ResolverDef>>,
 ) {
   const queryClient = getQueryClient();
   if (queryOptions.queryKey[1]?.type === 'infinite') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-    void queryClient.prefetchInfiniteQuery(queryOptions as any);
+    void queryClient.prefetchInfiniteQuery(
+      queryOptions as ReturnType<TRPCInfiniteQueryOptions<ResolverDef>>,
+    );
   }
   else {
     void queryClient.prefetchQuery(queryOptions);
