@@ -12,14 +12,16 @@ import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
 import { useTRPC } from '@/trpc/react';
 
-import type { schema } from '@/server/database';
+import type { inferProcedureOutput } from '@trpc/server';
+
+import type { AppRouter } from '@/server/api/root';
 
 type UserItemMenuDialogContentProps = Readonly<{
   setOpen: (open: boolean) => void;
 }> & UserItemMenuProps;
 
 type UserItemMenuProps = Readonly<{
-  user: typeof schema.users.$inferSelect;
+  user: inferProcedureOutput<AppRouter['users']['list']>['data'][number];
 }>;
 
 export function UserItemMenu({ user }: UserItemMenuProps) {

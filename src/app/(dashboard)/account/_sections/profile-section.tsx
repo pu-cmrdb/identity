@@ -21,7 +21,7 @@ import { useTRPC } from '@/trpc/react';
 import type { SubmitEventHandler } from 'react';
 
 const UpdateUserFormSchema = type({
-  displayUsername: type.string,
+  displayUsername: 'string | undefined',
 });
 type UpdateUserFormSchema = typeof UpdateUserFormSchema.infer;
 

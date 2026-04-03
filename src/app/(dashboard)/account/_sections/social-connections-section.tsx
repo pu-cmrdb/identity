@@ -51,7 +51,7 @@ export function SocialConnectionsSection() {
         {!accounts
           ? <Spinner />
           : (
-              <Item>
+              <Item variant="outline">
                 <ItemMedia variant="icon">
                   <DiscordIcon className="
                     size-6 text-[#454FBF]

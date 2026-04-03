@@ -17,7 +17,7 @@ export function PasskeysSection() {
       </div>
 
       <p className="text-muted-foreground">
-        使用裝置的生物辨識或 PIN 碼登入，無需記憶密碼,更安全也更方便
+        使用裝置的生物辨識或 PIN 碼登入，無需記憶密碼，更安全也更方便
       </p>
 
       <div className="my-4">

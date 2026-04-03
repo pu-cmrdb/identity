@@ -16,17 +16,30 @@ export const usersRouter = createTRPCRouter({
     })))
     .query(async ({ input }) => {
       try {
-        const result = await db.query.users.findMany({
+        const result = (await db.query.users.findMany({
           limit: input.limit,
           offset: input.offset,
-        });
+        })).map((v) => ({
+          banExpires: v.banExpires,
+          banned: v.banned ?? false,
+          banReason: v.banReason,
+          createdAt: v.createdAt,
+          displayUsername: v.displayUsername,
+          email: v.email,
+          emailVerified: v.emailVerified,
+          id: v.id,
+          name: v.name,
+          role: v.role ?? 'user',
+          updatedAt: v.updatedAt,
+          username: v.username ?? '',
+        }));
 
         const [t] = await db.select({ count: count() }).from(schema.users);
 
         const perPage = input.limit;
         const totalItems = t?.count ?? 0;
         const totalPages = Math.ceil(totalItems / perPage);
-        const currentCurosr = input.offset;
+        const currentCursor = input.offset;
         const currentPage = Math.floor(input.offset / perPage);
         const hasNextPage = (input.offset + input.limit) < totalItems;
         const nextCursor = hasNextPage ? input.offset + perPage : null;
@@ -35,7 +48,7 @@ export const usersRouter = createTRPCRouter({
         return {
           data: result,
           meta: {
-            currentCurosr,
+            currentCursor,
             currentPage,
             hasNextPage,
             hasPreviousPage,

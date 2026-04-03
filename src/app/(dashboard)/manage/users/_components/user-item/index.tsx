@@ -1,11 +1,14 @@
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { schema } from '@/server/database';
 
 import { UserItemMenu } from './menu';
 
+import type { inferProcedureOutput } from '@trpc/server';
+
+import type { AppRouter } from '@/server/api/root';
+
 type UserItemProps = Readonly<{
-  user: typeof schema.users.$inferSelect;
+  user: inferProcedureOutput<AppRouter['users']['list']>['data'][number];
 }>;
 
 export function UserItem({ user }: UserItemProps) {
