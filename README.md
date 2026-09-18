@@ -45,11 +45,14 @@ bun run drizzle:migrate
 bun run db:seed
 ```
 
+`db:generate` also regenerates the Better Auth schema and Drizzle migration files.
+
 ## 開發
 
 ```bash
 bun run dev              # 啟動開發伺服器（Turbopack，port 3000）
 bun run check            # ESLint + TypeScript 型別檢查
+bun run typegen          # 產生 Next.js PageProps、LayoutProps 等型別
 bun run drizzle:studio   # 開啟 Drizzle Studio
 ```
 
@@ -59,6 +62,10 @@ bun run drizzle:studio   # 開啟 Drizzle Studio
 bun run build   # 正式環境建置
 bun run start   # 啟動正式伺服器
 ```
+
+`bun run start` 會透過啟動器執行 `.next/standalone/server.js`，並將相對的 SQLite
+路徑解析到專案根目錄的 `data` 資料夾，因此不會因 standalone runtime 改變工作目錄
+而建立 `.next/standalone/data/db.sqlite` 空資料庫。
 
 ## 正式環境部署（Docker）
 
@@ -78,6 +85,8 @@ bunx drizzle-kit migrate
 # 啟動容器
 docker compose up -d --build
 ```
+
+容器內的資料庫路徑固定為 `/app/data/db.sqlite`，並透過 `./data:/app/data` 持久化。
 
 ### 後續更新
 

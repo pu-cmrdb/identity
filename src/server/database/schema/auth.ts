@@ -152,8 +152,8 @@ export const oauthRefreshTokens = sqliteTable("oauth_refresh_tokens", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   referenceId: text("reference_id"),
-  expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
-  createdAt: integer("created_at", { mode: "timestamp_ms" }),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   revoked: integer("revoked", { mode: "timestamp_ms" }),
   authTime: integer("auth_time", { mode: "timestamp_ms" }),
   scopes: text("scopes", { mode: "json" }).notNull(),
@@ -161,7 +161,7 @@ export const oauthRefreshTokens = sqliteTable("oauth_refresh_tokens", {
 
 export const oauthAccessTokens = sqliteTable("oauth_access_tokens", {
   id: text("id").primaryKey(),
-  token: text("token").unique(),
+  token: text("token").notNull().unique(),
   clientId: text("client_id")
     .notNull()
     .references(() => oauthClients.clientId, { onDelete: "cascade" }),
@@ -173,8 +173,8 @@ export const oauthAccessTokens = sqliteTable("oauth_access_tokens", {
   refreshId: text("refresh_id").references(() => oauthRefreshTokens.id, {
     onDelete: "cascade",
   }),
-  expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
-  createdAt: integer("created_at", { mode: "timestamp_ms" }),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
   scopes: text("scopes", { mode: "json" }).notNull(),
 });
 
@@ -186,8 +186,8 @@ export const oauthConsents = sqliteTable("oauth_consents", {
   userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
   referenceId: text("reference_id"),
   scopes: text("scopes", { mode: "json" }).notNull(),
-  createdAt: integer("created_at", { mode: "timestamp_ms" }),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" }),
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
 });
 
 export const apikeys = sqliteTable(
@@ -268,7 +268,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const sessionsRelations = relations(sessions, ({ one, many }) => ({
-  users: one(users, {
+  user: one(users, {
     fields: [sessions.userId],
     references: [users.id],
   }),
@@ -277,14 +277,14 @@ export const sessionsRelations = relations(sessions, ({ one, many }) => ({
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
-  users: one(users, {
+  user: one(users, {
     fields: [accounts.userId],
     references: [users.id],
   }),
 }));
 
 export const audit_logsRelations = relations(audit_logs, ({ one }) => ({
-  users: one(users, {
+  user: one(users, {
     fields: [audit_logs.userId],
     references: [users.id],
   }),
@@ -293,7 +293,7 @@ export const audit_logsRelations = relations(audit_logs, ({ one }) => ({
 export const oauthClientsRelations = relations(
   oauthClients,
   ({ one, many }) => ({
-    users: one(users, {
+    user: one(users, {
       fields: [oauthClients.userId],
       references: [users.id],
     }),
@@ -306,15 +306,15 @@ export const oauthClientsRelations = relations(
 export const oauthRefreshTokensRelations = relations(
   oauthRefreshTokens,
   ({ one, many }) => ({
-    oauthClients: one(oauthClients, {
+    oauthClient: one(oauthClients, {
       fields: [oauthRefreshTokens.clientId],
       references: [oauthClients.clientId],
     }),
-    sessions: one(sessions, {
+    session: one(sessions, {
       fields: [oauthRefreshTokens.sessionId],
       references: [sessions.id],
     }),
-    users: one(users, {
+    user: one(users, {
       fields: [oauthRefreshTokens.userId],
       references: [users.id],
     }),
@@ -325,19 +325,19 @@ export const oauthRefreshTokensRelations = relations(
 export const oauthAccessTokensRelations = relations(
   oauthAccessTokens,
   ({ one }) => ({
-    oauthClients: one(oauthClients, {
+    oauthClient: one(oauthClients, {
       fields: [oauthAccessTokens.clientId],
       references: [oauthClients.clientId],
     }),
-    sessions: one(sessions, {
+    session: one(sessions, {
       fields: [oauthAccessTokens.sessionId],
       references: [sessions.id],
     }),
-    users: one(users, {
+    user: one(users, {
       fields: [oauthAccessTokens.userId],
       references: [users.id],
     }),
-    oauthRefreshTokens: one(oauthRefreshTokens, {
+    oauthRefreshToken: one(oauthRefreshTokens, {
       fields: [oauthAccessTokens.refreshId],
       references: [oauthRefreshTokens.id],
     }),
@@ -345,18 +345,18 @@ export const oauthAccessTokensRelations = relations(
 );
 
 export const oauthConsentsRelations = relations(oauthConsents, ({ one }) => ({
-  oauthClients: one(oauthClients, {
+  oauthClient: one(oauthClients, {
     fields: [oauthConsents.clientId],
     references: [oauthClients.clientId],
   }),
-  users: one(users, {
+  user: one(users, {
     fields: [oauthConsents.userId],
     references: [users.id],
   }),
 }));
 
 export const passkeysRelations = relations(passkeys, ({ one }) => ({
-  users: one(users, {
+  user: one(users, {
     fields: [passkeys.userId],
     references: [users.id],
   }),
