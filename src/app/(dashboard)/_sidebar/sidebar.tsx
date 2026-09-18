@@ -1,7 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
 
 import { SidebarMain } from './main';
 
@@ -13,7 +20,7 @@ export function DashboardSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
-                render={(
+                render={
                   <Link className="flex items-center gap-1" href="/">
                     <Image
                       alt="行雲身份管理系統"
@@ -23,12 +30,14 @@ export function DashboardSidebar() {
                     />
 
                     <div className="flex flex-col">
-                      <span className="text-xs text-muted-foreground">行雲者研發基地</span>
+                      <span className="text-muted-foreground text-xs">
+                        行雲者研發基地
+                      </span>
 
                       <span className="text-base">身份管理系統</span>
                     </div>
                   </Link>
-                )}
+                }
                 size="lg"
               />
             </SidebarMenuItem>

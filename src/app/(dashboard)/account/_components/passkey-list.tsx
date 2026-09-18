@@ -2,8 +2,21 @@
 
 import { CircleXIcon, KeyRoundIcon, Trash2Icon } from 'lucide-react';
 
-import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
@@ -51,7 +64,9 @@ export function PasskeyList() {
         <EmptyHeader>
           <EmptyTitle>無密碼金鑰</EmptyTitle>
 
-          <EmptyDescription>你還沒有任何密碼金鑰，點擊新增來建立一個</EmptyDescription>
+          <EmptyDescription>
+            你還沒有任何密碼金鑰，點擊新增來建立一個
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
@@ -68,7 +83,10 @@ export function PasskeyList() {
 
         <ItemDescription>
           建立於
-          {key.createdAt.toLocaleString('zh-TW', { dateStyle: 'long', timeStyle: 'short' })}
+          {key.createdAt.toLocaleString('zh-TW', {
+            dateStyle: 'long',
+            timeStyle: 'short',
+          })}
         </ItemDescription>
       </ItemContent>
 

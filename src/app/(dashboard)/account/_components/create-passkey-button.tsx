@@ -7,8 +7,23 @@ import { toast } from 'sonner';
 import { type } from 'arktype';
 import { useState } from 'react';
 
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { authClient } from '@/server/auth/client';
@@ -17,8 +32,10 @@ import type { SubmitEventHandler } from 'react';
 
 const CreatePasskeyFormSchema = type({
   name: type.string
-    .atLeastLength(1).configure({ message: '名稱為必填欄位' })
-    .atMostLength(50).configure({ message: '名稱不能超過 50 個字元' }),
+    .atLeastLength(1)
+    .configure({ message: '名稱為必填欄位' })
+    .atMostLength(50)
+    .configure({ message: '名稱不能超過 50 個字元' }),
 });
 
 type CreatePasskeyButtonProps = Readonly<{
@@ -60,17 +77,18 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
     onSuccess?.();
   });
 
-  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) => void handleSubmit(event);
+  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) =>
+    void handleSubmit(event);
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogTrigger
-        render={(
+        render={
           <Button>
             <PlusIcon />
             新增密碼金鑰
           </Button>
-        )}
+        }
       />
 
       <DialogContent>
@@ -85,7 +103,10 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
                 control={form.control}
                 name="name"
                 render={({ field, fieldState }) => (
-                  <Field data-disabled={form.formState.isSubmitting} data-invalid={fieldState.invalid}>
+                  <Field
+                    data-disabled={form.formState.isSubmitting}
+                    data-invalid={fieldState.invalid}
+                  >
                     <FieldLabel htmlFor={field.name}>名稱*</FieldLabel>
 
                     <Input
@@ -103,7 +124,9 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
                       為這個密碼金鑰取一個有意義的名稱，例如裝置名稱
                     </FieldDescription>
 
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -113,11 +136,19 @@ export function CreatePasskeyButton({ onSuccess }: CreatePasskeyButtonProps) {
               <DialogFooter className="sm:justify-between">
                 <DialogClose
                   render={
-                    <Button disabled={form.formState.isSubmitting} type="button" variant="outline">取消</Button>
+                    <Button
+                      disabled={form.formState.isSubmitting}
+                      type="button"
+                      variant="outline"
+                    >
+                      取消
+                    </Button>
                   }
                 />
 
-                <Button disabled={form.formState.isSubmitting} type="submit">建立</Button>
+                <Button disabled={form.formState.isSubmitting} type="submit">
+                  建立
+                </Button>
               </DialogFooter>
             </FieldGroup>
           </FieldSet>

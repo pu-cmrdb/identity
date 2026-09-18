@@ -10,7 +10,11 @@ import { createTRPCContext } from '@/server/api/trpc';
 
 import { createQueryClient } from './query-client';
 
-import type { ResolverDef, TRPCInfiniteQueryOptions, TRPCQueryOptions } from '@trpc/tanstack-react-query';
+import type {
+  ResolverDef,
+  TRPCInfiniteQueryOptions,
+  TRPCQueryOptions,
+} from '@trpc/tanstack-react-query';
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -50,8 +54,7 @@ export function prefetch(
     void queryClient.prefetchInfiniteQuery(
       queryOptions as ReturnType<TRPCInfiniteQueryOptions<ResolverDef>>,
     );
-  }
-  else {
+  } else {
     void queryClient.prefetchQuery(queryOptions);
   }
 }

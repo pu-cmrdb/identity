@@ -1,4 +1,11 @@
-import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { UserItemMenu } from './menu';
@@ -29,9 +36,7 @@ export function UserItem({ user }: UserItemProps) {
           <span className="font-normal text-muted-foreground">{user.name}</span>
         </ItemTitle>
 
-        <ItemDescription>
-          {user.email}
-        </ItemDescription>
+        <ItemDescription>{user.email}</ItemDescription>
       </ItemContent>
 
       <ItemActions>

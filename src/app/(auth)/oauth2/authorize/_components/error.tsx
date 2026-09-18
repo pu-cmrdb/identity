@@ -2,7 +2,13 @@
 
 import { CircleXIcon } from 'lucide-react';
 
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { Card } from '@/components/ui/card';
 
 export function AuthorizeAdminAccountProhibitedError() {
@@ -17,7 +23,9 @@ export function AuthorizeAdminAccountProhibitedError() {
           <EmptyHeader>
             <EmptyTitle>無效的帳號</EmptyTitle>
 
-            <EmptyDescription>系統管理員帳號無法用於第三方應用程式授權</EmptyDescription>
+            <EmptyDescription>
+              系統管理員帳號無法用於第三方應用程式授權
+            </EmptyDescription>
           </EmptyHeader>
         </Empty>
       </Card>

@@ -1,4 +1,8 @@
-import { adminAc, defaultStatements, userAc } from 'better-auth/plugins/admin/access';
+import {
+  adminAc,
+  defaultStatements,
+  userAc,
+} from 'better-auth/plugins/admin/access';
 import { ShieldUserIcon, User2Icon } from 'lucide-react';
 import { createAccessControl } from 'better-auth/plugins';
 

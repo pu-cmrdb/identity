@@ -18,8 +18,7 @@ let adminUser = await db.query.users.findFirst({
 if (adminUser) {
   console.log('⏭️ 管理員帳號已存在，略過');
   console.log('');
-}
-else {
+} else {
   try {
     await auth.api.createUser({
       body: {
@@ -44,8 +43,7 @@ else {
     console.log(`  使用者名稱：${adminName}`);
     console.log(`  密碼：${adminPassword}`);
     console.log('');
-  }
-  catch (error) {
+  } catch (error) {
     console.error('❌ 初始管理員使用者無法建立：', error);
   }
 }
@@ -65,8 +63,7 @@ if (existingAmsClient) {
   console.log('');
   console.log(`  應用程式 ID ： ${existingAmsClient.clientId}`);
   console.log('');
-}
-else {
+} else {
   try {
     const { client_id, client_secret } = await auth.api.adminCreateOAuthClient({
       body: {
@@ -93,8 +90,7 @@ else {
     console.log(`  應用程式 ID ： ${client_id}`);
     console.log(`  應用程式密鑰： ${client_secret}`);
     console.log('');
-  }
-  catch (error) {
+  } catch (error) {
     console.error('❌ 應用程式註冊失敗：', error);
   }
 }
@@ -118,8 +114,7 @@ if (adminUser) {
     console.log('');
     console.log('  若需要重新產生，請先手動刪除現有金鑰後再次執行。');
     console.log('');
-  }
-  else {
+  } else {
     try {
       const apiKey = await auth.api.createApiKey({
         body: {
@@ -134,8 +129,7 @@ if (adminUser) {
       console.log('⚠️  請妥善保存此金鑰，之後將無法再次查看：');
       console.log(`  API 金鑰：${apiKey.key}`);
       console.log('');
-    }
-    catch (error) {
+    } catch (error) {
       console.error('❌ API 金鑰建立失敗：', error);
     }
   }

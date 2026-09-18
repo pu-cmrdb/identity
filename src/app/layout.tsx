@@ -16,9 +16,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     <html lang="zh-Hant">
       <body>
         <TooltipProvider>
-          <TRPCReactProvider>
-            {children}
-          </TRPCReactProvider>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
         </TooltipProvider>
 
         <Toaster />

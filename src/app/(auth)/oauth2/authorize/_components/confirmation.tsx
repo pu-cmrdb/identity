@@ -4,7 +4,14 @@ import { CircleCheckIcon, EllipsisIcon, LinkIcon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -21,7 +28,11 @@ type AuthorizeConfirmationProps = Readonly<{
   session: Session;
 }>;
 
-export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfirmationProps) {
+export function AuthorizeConfirmation({
+  client,
+  scope,
+  session,
+}: AuthorizeConfirmationProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -32,7 +43,9 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
         scope,
       });
 
-      if (result.error) throw new Error(result.error.message ?? '發生錯誤');
+      if (result.error) {
+        throw new Error(result.error.message ?? '發生錯誤');
+      }
 
       return result.data;
     },
@@ -49,7 +62,12 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
     void authClient.signOut();
   };
 
-  const redirectUrl = new URL(decodeURIComponent(searchParams.get('redirect_uri')!));
+  const redirectUri = searchParams.get('redirect_uri');
+  if (!redirectUri) {
+    return null;
+  }
+
+  const redirectUrl = new URL(decodeURIComponent(redirectUri));
   const scopes = scope?.split(' ') ?? [];
   const clientName = client.client_name ?? '未知應用程式';
 
@@ -60,57 +78,49 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
           <Avatar className="size-16">
             <AvatarImage draggable={false} src={client.logo_uri} />
 
-            <AvatarFallback>
-              {clientName[0]}
-            </AvatarFallback>
+            <AvatarFallback>{clientName[0]}</AvatarFallback>
           </Avatar>
 
           <EllipsisIcon className="text-muted-foreground/60" />
 
           <Avatar className="size-16">
-            <AvatarImage draggable={false} src={`/api/user/${session.user.id}/image`} />
+            <AvatarImage
+              draggable={false}
+              src={`/api/user/${session.user.id}/image`}
+            />
 
-            <AvatarFallback>
-              {session.user.name[0]}
-            </AvatarFallback>
+            <AvatarFallback>{session.user.name[0]}</AvatarFallback>
           </Avatar>
         </div>
 
         <CardHeader className="text-center">
           <CardTitle className="text-xl">{clientName}</CardTitle>
 
-          <CardDescription className="text-base">想要存取你的帳號</CardDescription>
+          <CardDescription className="text-base">
+            想要存取你的帳號
+          </CardDescription>
 
-          <div className="text-sm text-muted-foreground/60">
-            以
-            <span className="px-1 font-medium">{session.user.name}</span>
+          <div className="text-muted-foreground/60 text-sm">
+            以<span className="px-1 font-medium">{session.user.name}</span>
             登入
-
-            <Button
-              className="px-1"
-              onClick={logout}
-              variant="link"
-            >
+            <Button className="px-1" onClick={logout} variant="link">
               不是你嗎？
             </Button>
           </div>
         </CardHeader>
 
-        <div className="px-8"><Separator /></div>
+        <div className="px-8">
+          <Separator />
+        </div>
 
         <CardContent className="space-y-4">
-          <div className="text-sm font-medium text-muted-foreground">
+          <div className="font-medium text-muted-foreground text-sm">
             這將會允許
-            {clientName}
-            ：
+            {clientName}：
           </div>
 
           {scopes.length > 0 && (
-            <ul className="
-              space-y-2 py-2
-              [&>li]:flex [&>li]:gap-2
-            "
-            >
+            <ul className="space-y-2 py-2 [&>li]:flex [&>li]:gap-2">
               {scopes.includes('openid') && (
                 <li>
                   <CircleCheckIcon className="text-emerald-500" />
@@ -134,20 +144,14 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
             </ul>
           )}
 
-          <div className="text-xs text-muted-foreground/40">
-            <ul className="
-              space-y-2
-              [&>li]:flex [&>li]:gap-1
-            "
-            >
+          <div className="text-muted-foreground/40 text-xs">
+            <ul className="space-y-2 [&>li]:flex [&>li]:gap-1">
               <li>
                 <LinkIcon size={16} />
                 當你接受後，你將會被重新導向至
-
                 <span className="font-medium">
                   {redirectUrl.protocol}
                   &#47;&#47;
-
                   {redirectUrl.host}
                 </span>
               </li>
@@ -158,7 +162,9 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
         <CardFooter className="justify-between">
           <Button
             disabled={isPending}
-            onClick={() => { mutate(false); }}
+            onClick={() => {
+              mutate(false);
+            }}
             variant="outline"
           >
             {isPending && !variables && <Spinner />}
@@ -167,7 +173,9 @@ export function AuthorizeConfirmation({ client, scope, session }: AuthorizeConfi
 
           <Button
             disabled={isPending}
-            onClick={() => { mutate(true); }}
+            onClick={() => {
+              mutate(true);
+            }}
           >
             {isPending && variables && <Spinner />}
             同意

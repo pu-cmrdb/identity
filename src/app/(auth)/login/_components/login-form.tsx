@@ -10,8 +10,20 @@ import { SiDiscord as DiscordIcon } from '@icons-pack/react-simple-icons';
 import { arktypeResolver } from '@hookform/resolvers/arktype';
 import { type } from 'arktype';
 
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator, FieldSet } from '@/components/ui/field';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+  FieldSet,
+} from '@/components/ui/field';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -28,8 +40,11 @@ const LoginFormSchema = type({
   identifier: type.string
     .atLeastLength(1)
     .configure({ message: '請輸入有效的電子郵件地址或使用者名稱' })
-    .narrow((value, ctx) =>
-      !value.includes('@') || (type.keywords.string.email.allows(value) || ctx.reject({ message: '請輸入有效的電子郵件' })),
+    .narrow(
+      (value, ctx) =>
+        !value.includes('@')
+        || type.keywords.string.email.allows(value)
+        || ctx.reject({ message: '請輸入有效的電子郵件' }),
     ),
   password: type.string
     .atLeastLength(8)
@@ -52,7 +67,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackURL = searchParams.has('sig')
     ? `/api/auth/oauth2/authorize?${searchParams.toString()}`
-    : searchParams.get('callbackUrl') ?? searchParams.get('continue') ?? '/';
+    : (searchParams.get('callbackUrl') ?? searchParams.get('continue') ?? '/');
 
   const form = useForm<LoginFormSchema>({
     defaultValues: {
@@ -65,14 +80,15 @@ export function LoginForm() {
 
   const { isPending: isPasskeyPending, refetch } = useQuery({
     enabled: false,
-    queryFn: () => authClient.signIn.passkey({
-      autoFill: true,
-      fetchOptions: {
-        onSuccess() {
-          router.push(callbackURL);
+    queryFn: () =>
+      authClient.signIn.passkey({
+        autoFill: true,
+        fetchOptions: {
+          onSuccess() {
+            router.push(callbackURL);
+          },
         },
-      },
-    }),
+      }),
     queryKey: ['passkey'],
   });
 
@@ -80,22 +96,17 @@ export function LoginForm() {
     mutationFn: async (values: LoginFormSchema) => {
       const isEmail = values.identifier.includes('@');
 
-      let result;
-
-      if (isEmail) {
-        result = await authClient.signIn.email({
-          callbackURL,
-          email: values.identifier,
-          password: values.password,
-        });
-      }
-      else {
-        result = await authClient.signIn.username({
-          callbackURL,
-          password: values.password,
-          username: values.identifier,
-        });
-      }
+      const result = isEmail
+        ? await authClient.signIn.email({
+            callbackURL,
+            email: values.identifier,
+            password: values.password,
+          })
+        : await authClient.signIn.username({
+            callbackURL,
+            password: values.password,
+            username: values.identifier,
+          });
 
       if (result.error) {
         throw new BetterAuthError(result.error.message ?? 'Unknown Error');
@@ -108,8 +119,7 @@ export function LoginForm() {
         if (isEmail) {
           form.setError('identifier', { message: '電子郵件或密碼不正確' });
           form.setError('password', { message: '電子郵件或密碼不正確' });
-        }
-        else {
+        } else {
           form.setError('identifier', { message: '使用者名稱或密碼不正確' });
           form.setError('password', { message: '使用者名稱或密碼不正確' });
         }
@@ -117,8 +127,12 @@ export function LoginForm() {
         return;
       }
 
-      form.setError('identifier', { message: `發生未知錯誤，請稍後再試一次 ${error}` });
-      form.setError('password', { message: `發生未知錯誤，請稍後再試一次 ${error.message}` });
+      form.setError('identifier', {
+        message: `發生未知錯誤，請稍後再試一次 ${error}`,
+      });
+      form.setError('password', {
+        message: `發生未知錯誤，請稍後再試一次 ${error.message}`,
+      });
     },
     onSuccess() {
       router.replace(callbackURL);
@@ -135,14 +149,16 @@ export function LoginForm() {
   };
 
   // 預載入 Passkey 選項
+  // biome-ignore lint/plugin/no-use-effect: Preloading Passkey must synchronize with the browser WebAuthn API after mount.
   useEffect(() => {
     const preloadPasskey = async () => {
       try {
-        if (!await PublicKeyCredential.isConditionalMediationAvailable()) return;
+        if (!(await PublicKeyCredential.isConditionalMediationAvailable())) {
+          return;
+        }
 
         await refetch();
-      }
-      catch (error) {
+      } catch (error) {
         console.error('無法使用 Passkey', error);
       }
     };
@@ -182,9 +198,7 @@ export function LoginForm() {
             name="password"
             render={({ field, fieldState }) => (
               <Field>
-                <FieldLabel htmlFor={field.name}>
-                  密碼
-                </FieldLabel>
+                <FieldLabel htmlFor={field.name}>密碼</FieldLabel>
 
                 <InputGroup>
                   <InputGroupInput
@@ -223,28 +237,21 @@ export function LoginForm() {
                   onCheckedChange={field.onChange}
                 />
 
-                <FieldLabel htmlFor={field.name}>
-                  記住我
-                </FieldLabel>
+                <FieldLabel htmlFor={field.name}>記住我</FieldLabel>
               </Field>
             )}
           />
         </FieldGroup>
 
         <Field>
-          <Button
-            disabled={isSignInPending}
-            type="submit"
-          >
+          <Button disabled={isSignInPending} type="submit">
             {isSignInPending ? <Spinner /> : null}
 
             <span>登入</span>
           </Button>
         </Field>
 
-        <FieldSeparator>
-          或使用
-        </FieldSeparator>
+        <FieldSeparator>或使用</FieldSeparator>
 
         <Field>
           <Button
@@ -257,16 +264,13 @@ export function LoginForm() {
           >
             {isPasskeyPending ? <Spinner /> : <KeyRoundIcon />}
 
-            <span>
-              Passkey
-            </span>
+            <span>Passkey</span>
           </Button>
 
           <Button
-            className={`
-              bg-[#5865F2] text-white
-              hover:bg-[#454FBF] hover:text-white
-            `}
+            className={
+              'bg-[#5865F2] text-white hover:bg-[#454FBF] hover:text-white'
+            }
             onClick={() => {
               void authClient.signIn.social({
                 provider: 'discord',
@@ -277,9 +281,7 @@ export function LoginForm() {
           >
             <DiscordIcon />
 
-            <span>
-              Discord
-            </span>
+            <span>Discord</span>
           </Button>
         </Field>
       </FieldSet>

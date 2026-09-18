@@ -27,9 +27,9 @@
       },
     ],
     "incremental": true,
+    "types": ["bun-types"],
 
     /* Path Aliases */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
     },

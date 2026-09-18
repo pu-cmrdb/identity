@@ -64,5 +64,8 @@ export function generatePassword(): string {
  * ```
  */
 export function normalizeUsername(username: string): string {
-  return username.toLowerCase().trim().replace(/[^a-z0-9_]/g, '_');
+  return username
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9_]/g, '_');
 }

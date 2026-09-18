@@ -8,8 +8,23 @@ import { type } from 'arktype';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from '@/components/ui/field';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { generatePassword, normalizeUsername } from '@/server/auth/utils';
 import { Button } from '@/components/ui/button';
@@ -23,14 +38,17 @@ import type { SubmitEventHandler } from 'react';
 
 const CreateUserFormSchema = type({
   displayUsername: type.string,
-  email: type.keywords.string
-    .email.configure({ message: '無效的電子郵件' })
-    .atLeastLength(1).configure({ message: '電子郵件為必填欄位' }),
+  email: type.keywords.string.email
+    .configure({ message: '無效的電子郵件' })
+    .atLeastLength(1)
+    .configure({ message: '電子郵件為必填欄位' }),
   name: type.keywords.string.trim.preformatted
-    .atLeastLength(3).configure({ message: '名稱至少需要 3 個字元' })
+    .atLeastLength(3)
+    .configure({ message: '名稱至少需要 3 個字元' })
     .pipe(normalizeUsername),
   password: type.string
-    .atLeastLength(8).configure({ message: '密碼至少需要 8 個字元' }),
+    .atLeastLength(8)
+    .configure({ message: '密碼至少需要 8 個字元' }),
 });
 type CreateUserFormSchema = typeof CreateUserFormSchema.infer;
 
@@ -77,23 +95,26 @@ export function CreateUserButton() {
       return;
     }
 
-    await queryClient.invalidateQueries({ queryKey: trpc.users.list.infiniteQueryKey() });
+    await queryClient.invalidateQueries({
+      queryKey: trpc.users.list.infiniteQueryKey(),
+    });
 
     onOpenChange(false);
     toast.success('使用者建立成功');
   });
 
-  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) => void handleSubmit(event);
+  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) =>
+    void handleSubmit(event);
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogTrigger
-        render={(
+        render={
           <Button>
             <PlusIcon />
             建立使用者
           </Button>
-        )}
+        }
       />
 
       <DialogContent>
@@ -134,13 +155,7 @@ export function CreateUserButton() {
                           <TriangleAlertIcon />
 
                           <AlertDescription>
-                            將會以
-                            {' '}
-
-                            {normalized}
-
-                            {' '}
-                            作為使用者名稱
+                            將會以 {normalized} 作為使用者名稱
                           </AlertDescription>
                         </Alert>
                       )}
@@ -149,7 +164,9 @@ export function CreateUserButton() {
                         使用者名稱可以用於登入，只能包含小寫字母、數字和底線。
                       </FieldDescription>
 
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
                     </Field>
                   );
                 }}
@@ -163,9 +180,7 @@ export function CreateUserButton() {
                     data-disabled={form.formState.isSubmitting}
                     data-invalid={fieldState.invalid}
                   >
-                    <FieldLabel htmlFor={field.name}>
-                      顯示名稱
-                    </FieldLabel>
+                    <FieldLabel htmlFor={field.name}>顯示名稱</FieldLabel>
 
                     <Input
                       aria-invalid={fieldState.invalid}
@@ -178,7 +193,9 @@ export function CreateUserButton() {
                       {...field}
                     />
 
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -204,7 +221,9 @@ export function CreateUserButton() {
                       type="email"
                     />
 
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -239,15 +258,15 @@ export function CreateUserButton() {
                       >
                         <DicesIcon />
 
-                        <span>
-                          隨機
-                        </span>
+                        <span>隨機</span>
                       </Button>
                     </ButtonGroup>
 
                     <FieldDescription>密碼必須至少 8 個字元</FieldDescription>
 
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -256,7 +275,7 @@ export function CreateUserButton() {
             <FieldGroup>
               <DialogFooter className="sm:justify-between">
                 <DialogClose
-                  render={(
+                  render={
                     <Button
                       disabled={form.formState.isSubmitting}
                       type="button"
@@ -264,11 +283,13 @@ export function CreateUserButton() {
                     >
                       取消
                     </Button>
-                  )}
+                  }
                 />
 
                 <Button
-                  disabled={form.formState.isSubmitting || !form.formState.isValid}
+                  disabled={
+                    form.formState.isSubmitting || !form.formState.isValid
+                  }
                   type="submit"
                 >
                   {form.formState.isSubmitting && <Spinner />}

@@ -5,7 +5,13 @@ import { usePathname } from 'next/navigation';
 
 import Link from 'next/link';
 
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
 import { useSession } from '@/components/providers/session-provider';
 
 export function SidebarMain() {
@@ -21,24 +27,24 @@ export function SidebarMain() {
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname.startsWith('/account')}
-              render={(
+              render={
                 <Link href="/account">
                   <UserIcon />
                   帳號資訊
                 </Link>
-              )}
+              }
             />
           </SidebarMenuItem>
 
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname.startsWith('/applications')}
-              render={(
+              render={
                 <Link href="/applications">
                   <ShapesIcon />
                   我的應用程式
                 </Link>
-              )}
+              }
             />
           </SidebarMenuItem>
         </SidebarMenu>
@@ -51,24 +57,24 @@ export function SidebarMain() {
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname.startsWith('/manage/users')}
-              render={(
+              render={
                 <Link href="/manage/users">
                   <UsersIcon />
                   管理使用者
                 </Link>
-              )}
+              }
             />
           </SidebarMenuItem>
 
           <SidebarMenuItem>
             <SidebarMenuButton
               isActive={pathname === '/manage/applications'}
-              render={(
+              render={
                 <Link href="/manage/applications">
                   <ShapesIcon />
                   管理應用程式
                 </Link>
-              )}
+              }
             />
           </SidebarMenuItem>
         </SidebarMenu>

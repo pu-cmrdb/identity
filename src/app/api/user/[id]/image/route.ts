@@ -6,7 +6,10 @@ import { hashEmail } from '@/lib/utils';
 
 import type { NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: RouteContext<'/api/user/[id]/image'>) {
+export async function GET(
+  _request: NextRequest,
+  { params }: RouteContext<'/api/user/[id]/image'>,
+) {
   const { id: userId } = await params;
 
   const result = await db.query.users.findFirst({
@@ -14,7 +17,9 @@ export async function GET(request: NextRequest, { params }: RouteContext<'/api/u
     where: eq(schema.users.id, userId),
   });
 
-  if (!result) notFound();
+  if (!result) {
+    notFound();
+  }
 
   const hash = await hashEmail(result.email);
 

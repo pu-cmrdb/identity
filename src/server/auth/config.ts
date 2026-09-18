@@ -38,12 +38,7 @@ export const auth = betterAuth({
       allowDynamicClientRegistration: true,
       consentPage: '/oauth2/authorize',
       loginPage: '/login',
-      scopes: [
-        'openid',
-        'profile',
-        'email',
-        'offline_access',
-      ],
+      scopes: ['openid', 'profile', 'email', 'offline_access'],
       silenceWarnings: {
         oauthAuthServerConfig: true,
       },
@@ -73,10 +68,7 @@ export const auth = betterAuth({
       clientSecret: env.BETTER_AUTH_DISCORD_CLIENT_SECRET,
     },
   },
-  trustedOrigins: [
-    'http://localhost:*',
-    'https://*.cmrdb.cs.pu.edu.tw',
-  ],
+  trustedOrigins: ['http://localhost:*', 'https://*.cmrdb.cs.pu.edu.tw'],
   user: {
     additionalFields: {
       displayUsername: {

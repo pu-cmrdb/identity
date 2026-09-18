@@ -9,7 +9,15 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import Link from 'next/link';
 
-import { Field, FieldContent, FieldError, FieldGroup, FieldLabel, FieldSeparator, FieldSet } from '@/components/ui/field';
+import {
+  Field,
+  FieldContent,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+  FieldSet,
+} from '@/components/ui/field';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,19 +55,20 @@ export function ProfileSection() {
       return;
     }
 
-    await queryClient.invalidateQueries({ queryKey: trpc.users.list.infiniteQueryKey() });
+    await queryClient.invalidateQueries({
+      queryKey: trpc.users.list.infiniteQueryKey(),
+    });
     toast.success('個人檔案更新成功');
   });
 
-  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) => void handleSubmit(event);
+  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) =>
+    void handleSubmit(event);
 
   return (
     <section className="space-y-2">
-      <h2 className="text-lg font-bold">個人檔案</h2>
+      <h2 className="font-bold text-lg">個人檔案</h2>
 
-      <p className="text-muted-foreground">
-        管理你的顯示名稱與頭像
-      </p>
+      <p className="text-muted-foreground">管理你的顯示名稱與頭像</p>
 
       <form onSubmit={onSubmit}>
         <FieldSet className="my-8">
@@ -69,14 +78,15 @@ export function ProfileSection() {
 
               <FieldContent className="flex-row gap-8 py-4">
                 <Avatar className="size-24">
-                  <AvatarImage draggable={false} src={`/api/user/${user.id}/image`} />
+                  <AvatarImage
+                    draggable={false}
+                    src={`/api/user/${user.id}/image`}
+                  />
 
                   <AvatarFallback>{user.name[0]}</AvatarFallback>
                 </Avatar>
 
-                <div
-                  className="flex flex-col items-start justify-center gap-2"
-                >
+                <div className="flex flex-col items-start justify-center gap-2">
                   在 Gravatar 上變更你的使用者頭像
                   <Link
                     className={buttonVariants({ variant: 'outline' })}
@@ -125,7 +135,10 @@ export function ProfileSection() {
               control={form.control}
               name="displayUsername"
               render={({ field, fieldState }) => (
-                <Field data-disabled={form.formState.isSubmitting} data-invalid={fieldState.invalid}>
+                <Field
+                  data-disabled={form.formState.isSubmitting}
+                  data-invalid={fieldState.invalid}
+                >
                   <FieldLabel htmlFor={field.name}>顯示名稱</FieldLabel>
 
                   <Input
@@ -139,7 +152,9 @@ export function ProfileSection() {
                     {...field}
                   />
 
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />

@@ -11,7 +11,7 @@ export function PasskeysSection() {
   return (
     <section className="space-y-2">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold">密碼金鑰</h2>
+        <h2 className="font-bold text-lg">密碼金鑰</h2>
 
         <CreatePasskeyButton onSuccess={() => void refetch()} />
       </div>

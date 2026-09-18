@@ -7,19 +7,23 @@ import { db, schema } from '@/server/database';
 
 export const usersRouter = createTRPCRouter({
   list: protectedProcedure
-    .input(type({
-      'cursor?': 'number',
-      'limit?': '0 <= number <= 100',
-    }).pipe((v) => ({
-      limit: v.limit ?? 10,
-      offset: v.cursor ?? 0,
-    })))
+    .input(
+      type({
+        'cursor?': 'number',
+        'limit?': '0 <= number <= 100',
+      }).pipe((v) => ({
+        limit: v.limit ?? 10,
+        offset: v.cursor ?? 0,
+      })),
+    )
     .query(async ({ input }) => {
       try {
-        const result = (await db.query.users.findMany({
-          limit: input.limit,
-          offset: input.offset,
-        })).map((v) => ({
+        const result = (
+          await db.query.users.findMany({
+            limit: input.limit,
+            offset: input.offset,
+          })
+        ).map((v) => ({
           banExpires: v.banExpires,
           banned: v.banned ?? false,
           banReason: v.banReason,
@@ -41,7 +45,7 @@ export const usersRouter = createTRPCRouter({
         const totalPages = Math.ceil(totalItems / perPage);
         const currentCursor = input.offset;
         const currentPage = Math.floor(input.offset / perPage);
-        const hasNextPage = (input.offset + input.limit) < totalItems;
+        const hasNextPage = input.offset + input.limit < totalItems;
         const nextCursor = hasNextPage ? input.offset + perPage : null;
         const hasPreviousPage = input.offset > 0;
 
@@ -58,8 +62,7 @@ export const usersRouter = createTRPCRouter({
             totalPages,
           },
         };
-      }
-      catch (error) {
+      } catch (error) {
         // this should not happen
         console.error(error);
         throw new TRPCError({

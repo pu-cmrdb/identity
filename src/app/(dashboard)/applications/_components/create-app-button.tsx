@@ -8,7 +8,15 @@ import { type } from 'arktype';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Field, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +27,8 @@ import type { SubmitEventHandler } from 'react';
 
 const CreateApplicationFormSchema = type({
   name: type.keywords.string.trim.preformatted
-    .atLeastLength(1).configure({ message: '名稱為必填欄位' }),
+    .atLeastLength(1)
+    .configure({ message: '名稱為必填欄位' }),
 });
 type CreateApplicationFormSchema = typeof CreateApplicationFormSchema.infer;
 
@@ -56,23 +65,26 @@ export function CreateApplicationButton() {
       return;
     }
 
-    await queryClient.invalidateQueries({ queryKey: ['authClient.oauth2.getClients'] });
+    await queryClient.invalidateQueries({
+      queryKey: ['authClient.oauth2.getClients'],
+    });
 
     onOpenChange(false);
     toast.success('使用者建立成功');
   });
 
-  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) => void handleSubmit(event);
+  const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) =>
+    void handleSubmit(event);
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogTrigger
-        render={(
+        render={
           <Button>
             <PlusIcon />
             建立應用程式
           </Button>
-        )}
+        }
       />
 
       <DialogContent>
@@ -111,7 +123,7 @@ export function CreateApplicationButton() {
             <FieldGroup>
               <DialogFooter className="sm:justify-between">
                 <DialogClose
-                  render={(
+                  render={
                     <Button
                       disabled={form.formState.isSubmitting}
                       type="button"
@@ -119,11 +131,13 @@ export function CreateApplicationButton() {
                     >
                       取消
                     </Button>
-                  )}
+                  }
                 />
 
                 <Button
-                  disabled={form.formState.isSubmitting || !form.formState.isValid}
+                  disabled={
+                    form.formState.isSubmitting || !form.formState.isValid
+                  }
                   type="submit"
                 >
                   {form.formState.isSubmitting && <Spinner />}

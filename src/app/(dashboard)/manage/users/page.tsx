@@ -10,28 +10,29 @@ import { CreateUserButton, UserItem } from './_components';
 export default function DashboardManageUsersPage() {
   const trpc = useTRPC();
 
-  const { data, isPending } = useInfiniteQuery(trpc.users.list.infiniteQueryOptions(
-    {
-      limit: 20,
-    },
-    {
-      getNextPageParam: (lastPage) => lastPage.meta.nextCursor,
-    },
-  ));
+  const { data, isPending } = useInfiniteQuery(
+    trpc.users.list.infiniteQueryOptions(
+      {
+        limit: 20,
+      },
+      {
+        getNextPageParam: (lastPage) => lastPage.meta.nextCursor,
+      },
+    ),
+  );
 
   return (
-    <div className="
-      space-y-4 p-4
-      md:p-8
-      xl:p-16
-    "
-    >
+    <div className="space-y-4 p-4 md:p-8 xl:p-16">
       <div className="space-y-4 p-4">
         <h1 className="text-2xl">管理使用者</h1>
 
         <div className="flex items-center justify-between">
           <div>
-            {(isPending || !data) ? <Spinner /> : `共有 ${data.pages[0]?.meta.totalItems} 個使用者`}
+            {isPending || !data ? (
+              <Spinner />
+            ) : (
+              `共有 ${data.pages[0]?.meta.totalItems} 個使用者`
+            )}
           </div>
 
           <div>
@@ -45,7 +46,6 @@ export default function DashboardManageUsersPage() {
           page.data.map((user) => <UserItem key={user.id} user={user} />),
         )}
       </div>
-
     </div>
   );
 }

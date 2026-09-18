@@ -1,4 +1,8 @@
-import { adminClient, jwtClient, usernameClient } from 'better-auth/client/plugins';
+import {
+  adminClient,
+  jwtClient,
+  usernameClient,
+} from 'better-auth/client/plugins';
 import { apiKeyClient } from '@better-auth/api-key/client';
 import { auditLogClient } from 'better-auth-audit-logs/client';
 import { createAuthClient } from 'better-auth/react';

@@ -4,9 +4,7 @@ import { createEnv } from '@t3-oss/env-nextjs';
 export const env = createEnv({
   emptyStringAsUndefined: true,
   onInvalidAccess: (variable) => {
-    throw new Error(
-      `❌ 嘗試在用戶端存取伺服器端 \`${variable}\` 環境變數`,
-    );
+    throw new Error(`❌ 嘗試在用戶端存取伺服器端 \`${variable}\` 環境變數`);
   },
   onValidationError: (issues) => {
     const errorMessage = [
@@ -22,11 +20,18 @@ export const env = createEnv({
     throw new ParseError(errorMessage);
   },
   runtimeEnv: {
-    APP_URL: process.env.NODE_ENV === 'production' ? process.env.APP_PROD_URL : process.env.APP_DEV_URL,
+    APP_URL:
+      process.env.NODE_ENV === 'production'
+        ? process.env.APP_PROD_URL
+        : process.env.APP_DEV_URL,
     BETTER_AUTH_DISCORD_CLIENT_ID: process.env.BETTER_AUTH_DISCORD_CLIENT_ID,
-    BETTER_AUTH_DISCORD_CLIENT_SECRET: process.env.BETTER_AUTH_DISCORD_CLIENT_SECRET,
+    BETTER_AUTH_DISCORD_CLIENT_SECRET:
+      process.env.BETTER_AUTH_DISCORD_CLIENT_SECRET,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-    BETTER_AUTH_URL: process.env.NODE_ENV === 'production' ? process.env.APP_PROD_URL : process.env.APP_DEV_URL,
+    BETTER_AUTH_URL:
+      process.env.NODE_ENV === 'production'
+        ? process.env.APP_PROD_URL
+        : process.env.APP_DEV_URL,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
   },
@@ -37,7 +42,9 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: type('string'),
     BETTER_AUTH_URL: type('string.url'),
     DATABASE_URL: type('string.url'),
-    NODE_ENV: type('"development" | "test" | "production" | undefined').pipe((v) => v ?? 'development'),
+    NODE_ENV: type('"development" | "test" | "production" | undefined').pipe(
+      (v) => v ?? 'development',
+    ),
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

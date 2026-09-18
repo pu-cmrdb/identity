@@ -5,8 +5,22 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useState } from 'react';
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
@@ -18,7 +32,8 @@ import type { AppRouter } from '@/server/api/root';
 
 type UserItemMenuDialogContentProps = Readonly<{
   setOpen: (open: boolean) => void;
-}> & UserItemMenuProps;
+}> &
+  UserItemMenuProps;
 
 type UserItemMenuProps = Readonly<{
   user: inferProcedureOutput<AppRouter['users']['list']>['data'][number];
@@ -26,17 +41,22 @@ type UserItemMenuProps = Readonly<{
 
 export function UserItemMenu({ user }: UserItemMenuProps) {
   const [open, setOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState<'delete' | 'edit' | null>(null);
+  const [dialogContent, setDialogContent] = useState<'delete' | 'edit' | null>(
+    null,
+  );
 
   const setDialog = (tag: 'delete' | 'edit') => {
-    if (user.role === 'admin' && tag === 'delete') return;
+    if (user.role === 'admin' && tag === 'delete') {
+      return;
+    }
     setDialogContent(tag);
     setOpen(true);
   };
 
   const content = (() => {
     switch (dialogContent) {
-      case 'delete': return <UserItemMenuDeleteContent setOpen={setOpen} user={user} />;
+      case 'delete':
+        return <UserItemMenuDeleteContent setOpen={setOpen} user={user} />;
     }
   })();
 
@@ -44,17 +64,19 @@ export function UserItemMenu({ user }: UserItemMenuProps) {
     <AlertDialog
       onOpenChange={setOpen}
       onOpenChangeComplete={(value) => {
-        if (!value) setDialogContent(null);
+        if (!value) {
+          setDialogContent(null);
+        }
       }}
       open={open}
     >
       <DropdownMenu>
         <DropdownMenuTrigger
-          render={(
+          render={
             <Button size="icon" variant="ghost">
               <EllipsisVerticalIcon />
             </Button>
-          )}
+          }
         />
 
         <DropdownMenuContent>
@@ -72,7 +94,6 @@ export function UserItemMenu({ user }: UserItemMenuProps) {
             刪除
           </DropdownMenuItem>
         </DropdownMenuContent>
-
       </DropdownMenu>
 
       {content}
@@ -80,7 +101,10 @@ export function UserItemMenu({ user }: UserItemMenuProps) {
   );
 }
 
-export function UserItemMenuDeleteContent({ setOpen, user }: UserItemMenuDialogContentProps) {
+export function UserItemMenuDeleteContent({
+  setOpen,
+  user,
+}: UserItemMenuDialogContentProps) {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
@@ -89,7 +113,9 @@ export function UserItemMenuDeleteContent({ setOpen, user }: UserItemMenuDialogC
       const result = await authClient.admin.removeUser({
         userId: user.id,
       });
-      if (result.error) throw new Error(result.error.message);
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
     },
     onError: (error) => {
       toast.error('刪除使用者時發生錯誤', {
@@ -97,7 +123,9 @@ export function UserItemMenuDeleteContent({ setOpen, user }: UserItemMenuDialogC
       });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: trpc.users.list.infiniteQueryKey() });
+      await queryClient.invalidateQueries({
+        queryKey: trpc.users.list.infiniteQueryKey(),
+      });
 
       setOpen(false);
       toast.success('使用者刪除成功');
@@ -113,16 +141,13 @@ export function UserItemMenuDeleteContent({ setOpen, user }: UserItemMenuDialogC
           你確定要刪除使用者「
           {user.name}
           」？
-
           <br />
           這個動作將無法復原。
         </AlertDialogDescription>
       </AlertDialogHeader>
 
       <AlertDialogFooter>
-        <AlertDialogCancel disabled={isPending}>
-          取消
-        </AlertDialogCancel>
+        <AlertDialogCancel disabled={isPending}>取消</AlertDialogCancel>
 
         <AlertDialogAction
           disabled={isPending}

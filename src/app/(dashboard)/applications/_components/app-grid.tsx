@@ -3,7 +3,13 @@
 import { CircleXIcon, ShapesIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
 
@@ -11,7 +17,9 @@ export function ApplicationGrid() {
   const { data, error, isPending } = useQuery({
     queryFn: async () => {
       const result = await authClient.oauth2.getClients();
-      if (result.error) throw new Error(result.error.message);
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
       return result.data;
     },
     queryKey: ['authClient.oauth2.getClients'],
@@ -57,7 +65,9 @@ export function ApplicationGrid() {
         <EmptyHeader>
           <EmptyTitle>無應用程式</EmptyTitle>
 
-          <EmptyDescription>你還沒有任何應用程式，點擊建立來創建一個</EmptyDescription>
+          <EmptyDescription>
+            你還沒有任何應用程式，點擊建立來創建一個
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );
