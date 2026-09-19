@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "auth:generate": "bunx auth generate --config src/server/auth/config.ts --output src/server/database/schema/auth.ts --yes",
+    "start": "next start",
     "build": "next build",
     "check": "bun run lint && tsc --noEmit",
     "dev": "next dev --turbo --port 3000",
@@ -65,6 +66,7 @@
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "bun-types": "^1.4.2",
     "drizzle-kit": "^0.30.5",
     "postcss": "^8.5.3",
     "shadcn": "^3.8.5",
