@@ -246,7 +246,9 @@ export default function ApplicationPage() {
           <div className="space-y-2">
             <p className="font-medium text-sm">應用程式 ID</p>
             <div className="flex min-h-11 items-center rounded-lg bg-muted/60 px-3 py-2">
-              <code className="break-all text-sm">{data.client_id}</code>
+              <code className="select-all break-all text-sm">
+                {data.client_id}
+              </code>
             </div>
             <p className="text-muted-foreground text-xs">
               此應用程式在身份系統中的唯一識別碼。
@@ -261,7 +263,7 @@ export default function ApplicationPage() {
                   <div className="flex gap-2">
                     <Input
                       aria-invalid={redirectUriError?.index === index}
-                      className="h-11 rounded-xl font-mono text-sm"
+                      className="h-11 rounded-xl text-sm"
                       onChange={(event) => {
                         const nextFields = [...currentRedirectUriFields];
                         nextFields[index] = {
@@ -355,7 +357,7 @@ export default function ApplicationPage() {
                 <code
                   className={
                     token
-                      ? 'break-all text-sm'
+                      ? 'select-all break-all text-sm'
                       : 'text-muted-foreground text-sm'
                   }
                 >
