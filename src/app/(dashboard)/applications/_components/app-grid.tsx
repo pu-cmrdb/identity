@@ -1,6 +1,6 @@
 'use client';
 
-import { CircleXIcon, ShapesIcon } from 'lucide-react';
+import { CircleXIcon, ExternalLinkIcon, ShapesIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/empty';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
+import { ApplicationFormDialog } from './create-app-button';
 
 export function ApplicationGrid() {
   const { data, error, isPending } = useQuery({
@@ -74,10 +75,39 @@ export function ApplicationGrid() {
   }
 
   return (
-    <div>
+    <div className="grid gap-4 md:grid-cols-2">
       {data.map((app) => (
-        <div key={app.client_id}>
-          <div>{app.client_name}</div>
+        <div
+          className="flex items-start justify-between gap-4 rounded-2xl border bg-card p-6"
+          key={app.client_id}
+        >
+          <div className="min-w-0 space-y-3">
+            <div>
+              <h2 className="truncate font-medium text-lg">
+                {app.client_name || '未命名應用程式'}
+              </h2>
+              <p className="font-mono text-muted-foreground text-xs">
+                {app.client_id}
+              </p>
+            </div>
+
+            <div className="space-y-1 text-sm">
+              <p className="text-muted-foreground">
+                {app.redirect_uris.length} 個重新導向 URI
+              </p>
+              {app.redirect_uris.slice(0, 2).map((uri) => (
+                <p
+                  className="flex min-w-0 items-center gap-1 truncate"
+                  key={uri}
+                >
+                  <ExternalLinkIcon className="size-3 shrink-0 text-muted-foreground" />
+                  <span className="truncate">{uri}</span>
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <ApplicationFormDialog application={app} />
         </div>
       ))}
     </div>
