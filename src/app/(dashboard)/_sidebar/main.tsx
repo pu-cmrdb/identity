@@ -38,7 +38,10 @@ export function SidebarMain() {
 
           <SidebarMenuItem>
             <SidebarMenuButton
-              isActive={pathname.startsWith('/applications')}
+              isActive={
+                pathname.startsWith('/applications')
+                || pathname.startsWith('/application/')
+              }
               render={
                 <Link href="/applications">
                   <ShapesIcon />

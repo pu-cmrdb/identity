@@ -2,6 +2,7 @@
 
 import { CircleXIcon, ExternalLinkIcon, ShapesIcon } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 
 import {
   Empty,
@@ -12,7 +13,6 @@ import {
 } from '@/components/ui/empty';
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/server/auth/client';
-import { ApplicationFormDialog } from './create-app-button';
 
 export function ApplicationGrid() {
   const { data, error, isPending } = useQuery({
@@ -28,7 +28,7 @@ export function ApplicationGrid() {
 
   if (isPending) {
     return (
-      <Empty>
+      <Empty className="min-h-64">
         <EmptyMedia>
           <Spinner className="size-8" />
         </EmptyMedia>
@@ -42,7 +42,7 @@ export function ApplicationGrid() {
 
   if (error) {
     return (
-      <Empty>
+      <Empty className="min-h-64">
         <EmptyMedia variant="icon">
           <CircleXIcon />
         </EmptyMedia>
@@ -58,7 +58,7 @@ export function ApplicationGrid() {
 
   if (!data?.length) {
     return (
-      <Empty>
+      <Empty className="min-h-64">
         <EmptyMedia variant="icon">
           <ShapesIcon />
         </EmptyMedia>
@@ -75,10 +75,11 @@ export function ApplicationGrid() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="divide-y border-y">
       {data.map((app) => (
-        <div
-          className="flex items-start justify-between gap-4 rounded-2xl border bg-card p-6"
+        <Link
+          className="flex items-start justify-between gap-4 px-2 py-6 transition-colors hover:bg-muted/40"
+          href={`/application/${app.client_id}`}
           key={app.client_id}
         >
           <div className="min-w-0 space-y-3">
@@ -106,9 +107,7 @@ export function ApplicationGrid() {
               ))}
             </div>
           </div>
-
-          <ApplicationFormDialog application={app} />
-        </div>
+        </Link>
       ))}
     </div>
   );

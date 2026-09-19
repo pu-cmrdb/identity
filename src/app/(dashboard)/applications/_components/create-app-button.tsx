@@ -1,14 +1,11 @@
 'use client';
 
-import { arktypeResolver } from '@hookform/resolvers/arktype';
-import { type } from 'arktype';
-import { PencilIcon, PlusIcon } from 'lucide-react';
+import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import type { OAuthClient } from '@better-auth/oauth-provider';
 import type { SubmitEventHandler } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -31,100 +28,79 @@ import {
   FieldSet,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from '@/components/ui/native-select';
 import { Spinner } from '@/components/ui/spinner';
+import {
+  type OAuthApplicationType,
+  validateOAuthRedirectUri,
+} from '@/lib/oauth-redirect-uri';
 import { authClient } from '@/server/auth/client';
 
-const ApplicationFormSchema = type({
-  name: type.keywords.string.trim.preformatted.atLeastLength(1).configure({
-    message: '名稱為必填欄位',
-  }),
-  redirectUris: type.keywords.string.trim.preformatted
-    .atLeastLength(1)
-    .configure({ message: '至少需要一個重新導向 URI' }),
-});
+type CreateApplicationFormValues = {
+  applicationType: OAuthApplicationType;
+  name: string;
+  redirectUris: Array<{ value: string }>;
+};
 
-type ApplicationFormValues = typeof ApplicationFormSchema.infer;
-
-function parseRedirectUris(value: string) {
-  return value
-    .split(/\r?\n/)
-    .map((uri) => uri.trim())
-    .filter(Boolean);
-}
-
-function validateRedirectUris(value: string) {
-  const uris = parseRedirectUris(value);
-  if (!uris.length) {
-    return '至少需要一個重新導向 URI';
-  }
-
-  for (const uri of uris) {
-    try {
-      const url = new URL(uri);
-      if (!['http:', 'https:'].includes(url.protocol)) {
-        return 'URI 必須使用 http 或 https';
-      }
-    } catch {
-      return `無效的 URI：${uri}`;
-    }
-  }
-
-  return true;
-}
-
-type ApplicationFormDialogProps = { application?: OAuthClient };
-
-export function ApplicationFormDialog({
-  application,
-}: ApplicationFormDialogProps) {
+export function CreateApplicationButton() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const isEditing = Boolean(application);
 
-  const form = useForm<ApplicationFormValues>({
+  const form = useForm<CreateApplicationFormValues>({
     defaultValues: {
-      name: application?.client_name ?? '',
-      redirectUris: application?.redirect_uris.join('\n') ?? '',
+      applicationType: 'web',
+      name: '',
+      redirectUris: [{ value: '' }],
     },
     mode: 'onChange',
-    resolver: arktypeResolver(ApplicationFormSchema),
+  });
+  const redirectUris = useFieldArray({
+    control: form.control,
+    name: 'redirectUris',
+  });
+  const applicationType = useWatch({
+    control: form.control,
+    name: 'applicationType',
   });
 
   const onOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
-      form.reset({
-        name: application?.client_name ?? '',
-        redirectUris: application?.redirect_uris.join('\n') ?? '',
-      });
+      form.reset();
     }
     setOpen(nextOpen);
   };
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    const redirectUris = parseRedirectUris(data.redirectUris);
-    const redirectUrisError = validateRedirectUris(data.redirectUris);
-    if (redirectUrisError !== true) {
-      form.setError('redirectUris', { message: redirectUrisError });
+    const uris = data.redirectUris.map(({ value }) => value.trim());
+    const invalidIndex = uris.findIndex((uri) =>
+      validateOAuthRedirectUri(uri, data.applicationType),
+    );
+    if (invalidIndex >= 0) {
+      form.setError(`redirectUris.${invalidIndex}.value`, {
+        message:
+          validateOAuthRedirectUri(
+            uris[invalidIndex] ?? '',
+            data.applicationType,
+          ) ?? undefined,
+      });
       return;
     }
 
-    const result =
-      isEditing && application
-        ? await authClient.oauth2.updateClient({
-            client_id: application.client_id,
-            update: { client_name: data.name, redirect_uris: redirectUris },
-          })
-        : await authClient.oauth2.createClient({
-            client_name: data.name,
-            redirect_uris: redirectUris,
-          });
+    const result = await authClient.oauth2.createClient({
+      client_name: data.name.trim(),
+      redirect_uris: uris,
+      token_endpoint_auth_method:
+        data.applicationType === 'native' ? 'none' : 'client_secret_basic',
+      type: data.applicationType,
+    });
 
     if (result.error) {
-      toast.error(
-        isEditing ? '更新應用程式時發生錯誤' : '建立應用程式時發生錯誤',
-        { description: result.error.message },
-      );
+      toast.error('建立應用程式時發生錯誤', {
+        description: result.error.message,
+      });
       return;
     }
 
@@ -132,7 +108,7 @@ export function ApplicationFormDialog({
       queryKey: ['authClient.oauth2.getClients'],
     });
     onOpenChange(false);
-    toast.success(isEditing ? '應用程式更新成功' : '應用程式建立成功');
+    toast.success('應用程式建立成功');
   });
 
   const onSubmit: SubmitEventHandler<HTMLFormElement> = (event) =>
@@ -142,21 +118,20 @@ export function ApplicationFormDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogTrigger
         render={
-          <Button variant={isEditing ? 'ghost' : 'default'}>
-            {isEditing ? <PencilIcon /> : <PlusIcon />}
-            {isEditing ? '編輯' : '建立應用程式'}
+          <Button>
+            <PlusIcon />
+            建立應用程式
           </Button>
         }
       />
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>
-            {isEditing ? '編輯應用程式' : '建立應用程式'}
-          </DialogTitle>
+          <DialogTitle>建立應用程式</DialogTitle>
           <DialogDescription>
-            設定應用程式名稱與 OAuth 授權完成後要返回的網址。
+            選擇應用程式類型，並設定 OAuth 授權完成後允許返回的 URI。
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={onSubmit}>
           <FieldSet>
             <FieldGroup>
@@ -176,30 +151,103 @@ export function ApplicationFormDialog({
                     <FieldError errors={[fieldState.error]} />
                   </Field>
                 )}
+                rules={{ required: '名稱為必填欄位' }}
               />
+
               <Controller
                 control={form.control}
-                name="redirectUris"
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>重新導向 URI</FieldLabel>
-                    <Textarea
+                name="applicationType"
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel htmlFor={field.name}>應用程式類型</FieldLabel>
+                    <NativeSelect
                       {...field}
-                      aria-invalid={fieldState.invalid}
+                      className="w-full"
                       disabled={form.formState.isSubmitting}
                       id={field.name}
-                      placeholder="https://example.com/oauth/callback"
-                      rows={4}
-                    />
+                      onChange={(event) => {
+                        field.onChange(event);
+                        void form.trigger('redirectUris');
+                      }}
+                    >
+                      <NativeSelectOption value="web">
+                        Web 應用程式
+                      </NativeSelectOption>
+                      <NativeSelectOption value="native">
+                        原生應用程式
+                      </NativeSelectOption>
+                    </NativeSelect>
                     <FieldDescription>
-                      每行填寫一個完整的 http 或 https 網址。
+                      原生應用程式可使用反向網域 deep link，且不會取得 Client
+                      Token。
                     </FieldDescription>
-                    <FieldError errors={[fieldState.error]} />
                   </Field>
                 )}
-                rules={{ validate: validateRedirectUris }}
               />
+
+              <Field>
+                <FieldLabel>重新導向 URI</FieldLabel>
+                <div className="space-y-3">
+                  {redirectUris.fields.map((redirectUri, index) => (
+                    <Controller
+                      control={form.control}
+                      key={redirectUri.id}
+                      name={`redirectUris.${index}.value`}
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <div className="flex gap-2">
+                            <Input
+                              {...field}
+                              aria-invalid={fieldState.invalid}
+                              disabled={form.formState.isSubmitting}
+                              placeholder={
+                                applicationType === 'native'
+                                  ? 'com.example.app:/callback'
+                                  : 'https://example.com/oauth/callback'
+                              }
+                            />
+                            <Button
+                              aria-label="移除重新導向 URI"
+                              disabled={
+                                form.formState.isSubmitting
+                                || redirectUris.fields.length === 1
+                              }
+                              onClick={() => redirectUris.remove(index)}
+                              size="icon"
+                              type="button"
+                              variant="ghost"
+                            >
+                              <Trash2Icon />
+                            </Button>
+                          </div>
+                          <FieldError errors={[fieldState.error]} />
+                        </Field>
+                      )}
+                      rules={{
+                        validate: (value) =>
+                          validateOAuthRedirectUri(value, applicationType)
+                          ?? true,
+                      }}
+                    />
+                  ))}
+                </div>
+                <Button
+                  disabled={form.formState.isSubmitting}
+                  onClick={() => redirectUris.append({ value: '' })}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                >
+                  <PlusIcon />
+                  新增 URI
+                </Button>
+                <FieldDescription>
+                  Web 應用程式使用 HTTPS 或 HTTP loopback
+                  URI；原生應用程式亦可使用 deep link。
+                </FieldDescription>
+              </Field>
             </FieldGroup>
+
             <DialogFooter>
               <DialogClose
                 render={
@@ -219,7 +267,7 @@ export function ApplicationFormDialog({
                 type="submit"
               >
                 {form.formState.isSubmitting && <Spinner />}
-                {isEditing ? '儲存變更' : '建立'}
+                建立
               </Button>
             </DialogFooter>
           </FieldSet>
@@ -227,8 +275,4 @@ export function ApplicationFormDialog({
       </DialogContent>
     </Dialog>
   );
-}
-
-export function CreateApplicationButton() {
-  return <ApplicationFormDialog />;
 }
