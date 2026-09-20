@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckIcon, CopyIcon } from 'lucide-react';
+import { CheckIcon, CopyIcon, RefreshCwIcon } from 'lucide-react';
 import { useMemo, useState, useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
 
@@ -28,6 +28,34 @@ type OAuthUrlGeneratorProps = {
   clientId: string;
 };
 
+type PkcePair = {
+  challenge: string;
+  state: string;
+  verifier: string;
+};
+
+function randomBase64Url(byteLength: number) {
+  const bytes = crypto.getRandomValues(new Uint8Array(byteLength));
+  return btoa(String.fromCharCode(...bytes))
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/u, '');
+}
+
+async function createPkcePair(): Promise<PkcePair> {
+  const verifier = randomBase64Url(32);
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(verifier),
+  );
+  const challenge = btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replaceAll('+', '-')
+    .replaceAll('/', '_')
+    .replace(/=+$/u, '');
+
+  return { challenge, state: randomBase64Url(16), verifier };
+}
+
 export function OAuthUrlGenerator({
   clientId,
   redirectUris,
@@ -39,17 +67,31 @@ export function OAuthUrlGenerator({
   );
   const [selectedScopes, setSelectedScopes] = useState<string[]>(['openid']);
   const [redirectUri, setRedirectUri] = useState(redirectUris[0] ?? '');
-  const [copied, setCopied] = useState(false);
+  const [pkce, setPkce] = useState<PkcePair | null>(null);
+  const [copiedField, setCopiedField] = useState<'url' | 'verifier'>();
+
+  const regeneratePkce = async () => {
+    setPkce(await createPkcePair());
+    setCopiedField(undefined);
+  };
 
   const authorizationUrl = useMemo(() => {
+    if (!(origin && pkce)) {
+      return '';
+    }
+
     const params = new URLSearchParams({
       client_id: clientId,
+      code_challenge: pkce.challenge,
+      code_challenge_method: 'S256',
       redirect_uri: redirectUri,
       response_type: 'code',
       scope: selectedScopes.join(' '),
+      state: pkce.state,
     });
-    return `${origin}/oauth2/authorize?${params.toString()}`;
-  }, [clientId, origin, redirectUri, selectedScopes]);
+    return `${origin}/api/auth/oauth2/authorize?${params.toString()}`;
+  }, [clientId, origin, pkce, redirectUri, selectedScopes]);
+  const codeVerifier = pkce ? pkce.verifier : '';
 
   const toggleScope = (scope: string, checked: boolean) => {
     setSelectedScopes((current) =>
@@ -57,13 +99,17 @@ export function OAuthUrlGenerator({
         ? [...current, scope]
         : current.filter((selectedScope) => selectedScope !== scope),
     );
-    setCopied(false);
+    setCopiedField(undefined);
   };
 
-  const copyUrl = async () => {
-    await navigator.clipboard.writeText(authorizationUrl);
-    setCopied(true);
-    toast.success('OAuth URL 已複製');
+  const copyValue = async (
+    value: string,
+    field: 'url' | 'verifier',
+    message: string,
+  ) => {
+    await navigator.clipboard.writeText(value);
+    setCopiedField(field);
+    toast.success(message);
   };
 
   return (
@@ -117,7 +163,7 @@ export function OAuthUrlGenerator({
             id="oauth-redirect-uri"
             onChange={(event) => {
               setRedirectUri(event.target.value);
-              setCopied(false);
+              setCopiedField(undefined);
             }}
             value={redirectUri}
           >
@@ -130,21 +176,63 @@ export function OAuthUrlGenerator({
         </div>
 
         <div className="space-y-3">
-          <p className="font-medium text-sm">生成された URL</p>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-medium text-sm">PKCE Code Verifier</p>
+              <p className="mt-1 text-muted-foreground text-xs">
+                請由應用程式暫時保存，並在交換 Token 時以 code_verifier 傳送。
+              </p>
+            </div>
+            <Button
+              onClick={() => void regeneratePkce()}
+              size="sm"
+              type="button"
+              variant="outline"
+            >
+              <RefreshCwIcon />
+              {pkce ? '重新產生' : '產生 PKCE'}
+            </Button>
+          </div>
           <div className="flex gap-2">
             <Input
-              className="h-11 min-w-0 flex-1 rounded-xl font-sans text-sm"
+              className="h-11 min-w-0 flex-1 select-all rounded-xl font-sans text-sm"
               readOnly
-              value={authorizationUrl}
+              value={codeVerifier || '請先產生 PKCE'}
             />
             <Button
-              aria-label="OAuth URL をコピー"
-              onClick={() => void copyUrl()}
+              aria-label="複製 PKCE Code Verifier"
+              disabled={!codeVerifier}
+              onClick={() =>
+                void copyValue(codeVerifier, 'verifier', 'Code Verifier 已複製')
+              }
               size="icon"
               type="button"
-              variant={copied ? 'secondary' : 'default'}
+              variant={copiedField === 'verifier' ? 'secondary' : 'outline'}
             >
-              {copied ? <CheckIcon /> : <CopyIcon />}
+              {copiedField === 'verifier' ? <CheckIcon /> : <CopyIcon />}
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <p className="font-medium text-sm">產生的授權 URL</p>
+          <div className="flex gap-2">
+            <Input
+              className="h-11 min-w-0 flex-1 select-all rounded-xl font-sans text-sm"
+              readOnly
+              value={authorizationUrl || '請先產生 PKCE'}
+            />
+            <Button
+              aria-label="複製 OAuth URL"
+              disabled={!authorizationUrl}
+              onClick={() =>
+                void copyValue(authorizationUrl, 'url', 'OAuth URL 已複製')
+              }
+              size="icon"
+              type="button"
+              variant={copiedField === 'url' ? 'secondary' : 'default'}
+            >
+              {copiedField === 'url' ? <CheckIcon /> : <CopyIcon />}
             </Button>
           </div>
         </div>
