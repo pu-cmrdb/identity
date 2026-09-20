@@ -42,7 +42,7 @@ export const auth = betterAuth({
       silenceWarnings: {
         oauthAuthServerConfig: true,
       },
-      resources: ['https://app.cmrdb.cs.pu.edu.tw'],
+      validAudiences: ['https://app.cmrdb.cs.pu.edu.tw'],
     }),
     username({
       usernameNormalization: normalizeUsername,
