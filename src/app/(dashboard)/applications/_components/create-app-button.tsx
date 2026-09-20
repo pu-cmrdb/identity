@@ -1,6 +1,6 @@
 'use client';
 
-import { PlusIcon, Trash2Icon } from 'lucide-react';
+import { CheckIcon, CopyIcon, PlusIcon, Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
@@ -41,17 +41,21 @@ import { authClient } from '@/server/auth/client';
 
 type CreateApplicationFormValues = {
   applicationType: OAuthApplicationType;
+  clientAuthentication: 'public' | 'confidential';
   name: string;
   redirectUris: Array<{ value: string }>;
 };
 
 export function CreateApplicationButton() {
   const [open, setOpen] = useState(false);
+  const [createdClientSecret, setCreatedClientSecret] = useState<string>();
+  const [secretCopied, setSecretCopied] = useState(false);
   const queryClient = useQueryClient();
 
   const form = useForm<CreateApplicationFormValues>({
     defaultValues: {
       applicationType: 'web',
+      clientAuthentication: 'confidential',
       name: '',
       redirectUris: [{ value: '' }],
     },
@@ -69,6 +73,8 @@ export function CreateApplicationButton() {
   const onOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       form.reset();
+      setCreatedClientSecret(undefined);
+      setSecretCopied(false);
     }
     setOpen(nextOpen);
   };
@@ -93,7 +99,7 @@ export function CreateApplicationButton() {
       client_name: data.name.trim(),
       redirect_uris: uris,
       token_endpoint_auth_method:
-        data.applicationType === 'native' ? 'none' : 'client_secret_basic',
+        data.clientAuthentication === 'public' ? 'none' : 'client_secret_basic',
       type: data.applicationType,
     });
 
@@ -107,7 +113,11 @@ export function CreateApplicationButton() {
     await queryClient.invalidateQueries({
       queryKey: ['authClient.oauth2.getClients'],
     });
-    onOpenChange(false);
+    if (result.data?.client_secret) {
+      setCreatedClientSecret(result.data.client_secret);
+    } else {
+      onOpenChange(false);
+    }
     toast.success('應用程式建立成功');
   });
 
@@ -132,146 +142,205 @@ export function CreateApplicationButton() {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={onSubmit}>
-          <FieldSet>
-            <FieldGroup>
-              <Controller
-                control={form.control}
-                name="name"
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>應用程式名稱</FieldLabel>
-                    <Input
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                      disabled={form.formState.isSubmitting}
-                      id={field.name}
-                      placeholder="我的應用程式"
-                    />
-                    <FieldError errors={[fieldState.error]} />
-                  </Field>
-                )}
-                rules={{ required: '名稱為必填欄位' }}
+        {createdClientSecret ? (
+          <div className="space-y-4">
+            <p className="text-muted-foreground text-sm">
+              這是唯一一次顯示客戶端
+              Secret。請立即複製並妥善保存，關閉後將無法再次查看。
+            </p>
+            <div className="flex gap-2">
+              <Input
+                className="select-all font-mono text-sm"
+                readOnly
+                value={createdClientSecret}
               />
-
-              <Controller
-                control={form.control}
-                name="applicationType"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>應用程式類型</FieldLabel>
-                    <NativeSelect
-                      {...field}
-                      className="w-full"
-                      disabled={form.formState.isSubmitting}
-                      id={field.name}
-                      onChange={(event) => {
-                        field.onChange(event);
-                        void form.trigger('redirectUris');
-                      }}
-                    >
-                      <NativeSelectOption value="web">
-                        Web 應用程式
-                      </NativeSelectOption>
-                      <NativeSelectOption value="native">
-                        原生應用程式
-                      </NativeSelectOption>
-                    </NativeSelect>
-                    <FieldDescription>
-                      原生應用程式可使用反向網域 deep link，且不會取得 Client
-                      Token。
-                    </FieldDescription>
-                  </Field>
-                )}
-              />
-
-              <Field>
-                <FieldLabel>重新導向 URI</FieldLabel>
-                <div className="space-y-3">
-                  {redirectUris.fields.map((redirectUri, index) => (
-                    <Controller
-                      control={form.control}
-                      key={redirectUri.id}
-                      name={`redirectUris.${index}.value`}
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
-                          <div className="flex gap-2">
-                            <Input
-                              {...field}
-                              aria-invalid={fieldState.invalid}
-                              disabled={form.formState.isSubmitting}
-                              placeholder={
-                                applicationType === 'native'
-                                  ? 'com.example.app:/callback'
-                                  : 'https://example.com/oauth/callback'
-                              }
-                            />
-                            <Button
-                              aria-label="移除重新導向 URI"
-                              disabled={
-                                form.formState.isSubmitting
-                                || redirectUris.fields.length === 1
-                              }
-                              onClick={() => redirectUris.remove(index)}
-                              size="icon"
-                              type="button"
-                              variant="ghost"
-                            >
-                              <Trash2Icon />
-                            </Button>
-                          </div>
-                          <FieldError errors={[fieldState.error]} />
-                        </Field>
-                      )}
-                      rules={{
-                        validate: (value) =>
-                          validateOAuthRedirectUri(value, applicationType)
-                          ?? true,
-                      }}
-                    />
-                  ))}
-                </div>
-                <Button
-                  disabled={form.formState.isSubmitting}
-                  onClick={() => redirectUris.append({ value: '' })}
-                  size="sm"
-                  type="button"
-                  variant="outline"
-                >
-                  <PlusIcon />
-                  新增 URI
-                </Button>
-                <FieldDescription>
-                  Web 應用程式使用 HTTPS 或 HTTP loopback
-                  URI；原生應用程式亦可使用 deep link。
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-
+              <Button
+                aria-label="複製客戶端 Secret"
+                onClick={() => {
+                  void navigator.clipboard.writeText(createdClientSecret);
+                  setSecretCopied(true);
+                  toast.success('客戶端 Secret 已複製');
+                }}
+                size="icon"
+                type="button"
+                variant={secretCopied ? 'secondary' : 'default'}
+              >
+                {secretCopied ? <CheckIcon /> : <CopyIcon />}
+              </Button>
+            </div>
             <DialogFooter>
-              <DialogClose
-                render={
+              <DialogClose render={<Button type="button" />}>完成</DialogClose>
+            </DialogFooter>
+          </div>
+        ) : (
+          <form onSubmit={onSubmit}>
+            <FieldSet>
+              <FieldGroup>
+                <Controller
+                  control={form.control}
+                  name="name"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>應用程式名稱</FieldLabel>
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        disabled={form.formState.isSubmitting}
+                        id={field.name}
+                        placeholder="我的應用程式"
+                      />
+                      <FieldError errors={[fieldState.error]} />
+                    </Field>
+                  )}
+                  rules={{ required: '名稱為必填欄位' }}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="applicationType"
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>應用程式類型</FieldLabel>
+                      <NativeSelect
+                        {...field}
+                        className="w-full"
+                        disabled={form.formState.isSubmitting}
+                        id={field.name}
+                        onChange={(event) => {
+                          field.onChange(event);
+                          void form.trigger('redirectUris');
+                        }}
+                      >
+                        <NativeSelectOption value="web">
+                          Web 應用程式
+                        </NativeSelectOption>
+                        <NativeSelectOption value="native">
+                          原生應用程式
+                        </NativeSelectOption>
+                      </NativeSelect>
+                      <FieldDescription>
+                        原生應用程式可使用反向網域 deep link，且不會取得 Client
+                        Token。
+                      </FieldDescription>
+                    </Field>
+                  )}
+                />
+
+                <Controller
+                  control={form.control}
+                  name="clientAuthentication"
+                  render={({ field }) => (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>客戶端類型</FieldLabel>
+                      <NativeSelect
+                        {...field}
+                        className="w-full"
+                        disabled={form.formState.isSubmitting}
+                        id={field.name}
+                      >
+                        <NativeSelectOption value="confidential">
+                          Confidential（使用 Client Secret）
+                        </NativeSelectOption>
+                        <NativeSelectOption value="public">
+                          Public（不使用 Client Secret）
+                        </NativeSelectOption>
+                      </NativeSelect>
+                      <FieldDescription>
+                        Web 或原生只代表應用程式類型，不會決定是否使用 Client
+                        Secret。
+                      </FieldDescription>
+                    </Field>
+                  )}
+                />
+
+                <Field>
+                  <FieldLabel>重新導向 URI</FieldLabel>
+                  <div className="space-y-3">
+                    {redirectUris.fields.map((redirectUri, index) => (
+                      <Controller
+                        control={form.control}
+                        key={redirectUri.id}
+                        name={`redirectUris.${index}.value`}
+                        render={({ field, fieldState }) => (
+                          <Field data-invalid={fieldState.invalid}>
+                            <div className="flex gap-2">
+                              <Input
+                                {...field}
+                                aria-invalid={fieldState.invalid}
+                                disabled={form.formState.isSubmitting}
+                                placeholder={
+                                  applicationType === 'native'
+                                    ? 'com.example.app:/callback'
+                                    : 'https://example.com/oauth/callback'
+                                }
+                              />
+                              <Button
+                                aria-label="移除重新導向 URI"
+                                disabled={
+                                  form.formState.isSubmitting
+                                  || redirectUris.fields.length === 1
+                                }
+                                onClick={() => redirectUris.remove(index)}
+                                size="icon"
+                                type="button"
+                                variant="ghost"
+                              >
+                                <Trash2Icon />
+                              </Button>
+                            </div>
+                            <FieldError errors={[fieldState.error]} />
+                          </Field>
+                        )}
+                        rules={{
+                          validate: (value) =>
+                            validateOAuthRedirectUri(value, applicationType)
+                            ?? true,
+                        }}
+                      />
+                    ))}
+                  </div>
                   <Button
                     disabled={form.formState.isSubmitting}
+                    onClick={() => redirectUris.append({ value: '' })}
+                    size="sm"
                     type="button"
                     variant="outline"
-                  />
-                }
-              >
-                取消
-              </DialogClose>
-              <Button
-                disabled={
-                  form.formState.isSubmitting || !form.formState.isValid
-                }
-                type="submit"
-              >
-                {form.formState.isSubmitting && <Spinner />}
-                建立
-              </Button>
-            </DialogFooter>
-          </FieldSet>
-        </form>
+                  >
+                    <PlusIcon />
+                    新增 URI
+                  </Button>
+                  <FieldDescription>
+                    Web 應用程式使用 HTTPS 或 HTTP loopback
+                    URI；原生應用程式亦可使用 deep link。
+                  </FieldDescription>
+                </Field>
+              </FieldGroup>
+
+              <DialogFooter>
+                <DialogClose
+                  render={
+                    <Button
+                      disabled={form.formState.isSubmitting}
+                      type="button"
+                      variant="outline"
+                    />
+                  }
+                >
+                  取消
+                </DialogClose>
+                <Button
+                  disabled={
+                    form.formState.isSubmitting || !form.formState.isValid
+                  }
+                  type="submit"
+                >
+                  {form.formState.isSubmitting && <Spinner />}
+                  建立
+                </Button>
+              </DialogFooter>
+            </FieldSet>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );

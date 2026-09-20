@@ -22,7 +22,13 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { Input } from '@/components/ui/input';
 import { authClient } from '@/server/auth/client';
-import { ArrowLeftIcon, PlusIcon, Trash2Icon } from 'lucide-react';
+import {
+  ArrowLeftIcon,
+  CheckIcon,
+  CopyIcon,
+  PlusIcon,
+  Trash2Icon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -44,6 +50,7 @@ export default function ApplicationPage() {
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
+  const [isTokenCopied, setIsTokenCopied] = useState(false);
   const [name, setName] = useState<string | undefined>();
   const [redirectUriFields, setRedirectUriFields] = useState<
     RedirectUriField[] | undefined
@@ -150,6 +157,7 @@ export default function ApplicationPage() {
     setToken(
       (result.data as RotateClientSecretResult | null)?.client_secret ?? null,
     );
+    setIsTokenCopied(false);
     setIsResetting(false);
     setIsResetDialogOpen(false);
     toast.success('Token 重設成功');
@@ -372,6 +380,21 @@ export default function ApplicationPage() {
                   {token ?? '為了安全考量而隱藏'}
                 </code>
               </div>
+              {token && (
+                <Button
+                  aria-label="複製客戶端 Token"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(token);
+                    setIsTokenCopied(true);
+                    toast.success('Token 已複製');
+                  }}
+                  size="icon"
+                  type="button"
+                  variant={isTokenCopied ? 'secondary' : 'outline'}
+                >
+                  {isTokenCopied ? <CheckIcon /> : <CopyIcon />}
+                </Button>
+              )}
               <Button
                 disabled={data.public || isResetting}
                 onClick={() => setIsResetDialogOpen(true)}
