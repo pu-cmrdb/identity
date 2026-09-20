@@ -28,6 +28,13 @@ type AuthorizeConfirmationProps = Readonly<{
   session: Session;
 }>;
 
+const SCOPE_DESCRIPTIONS: Record<string, string> = {
+  email: '存取你的電子郵件地址',
+  offline_access: '在你離線時持續存取已授權的資料',
+  openid: '驗證你的身分',
+  profile: '存取你的基本個人資料',
+};
+
 export function AuthorizeConfirmation({
   client,
   scope,
@@ -68,7 +75,7 @@ export function AuthorizeConfirmation({
   }
 
   const redirectUrl = new URL(decodeURIComponent(redirectUri));
-  const scopes = scope?.split(' ') ?? [];
+  const scopes = [...new Set(scope?.trim().split(/\s+/).filter(Boolean) ?? [])];
   const clientName = client.client_name ?? '未知應用程式';
 
   return (
@@ -120,27 +127,16 @@ export function AuthorizeConfirmation({
           </div>
 
           {scopes.length > 0 && (
-            <ul className="space-y-2 py-2 [&>li]:flex [&>li]:gap-2">
-              {scopes.includes('openid') && (
-                <li>
-                  <CircleCheckIcon className="text-emerald-500" />
-                  驗證你的身分
+            <ul className="space-y-2 py-2">
+              {scopes.map((requestedScope) => (
+                <li className="flex items-start gap-2" key={requestedScope}>
+                  <CircleCheckIcon className="mt-0.5 size-5 shrink-0 text-emerald-500" />
+                  <span>
+                    {SCOPE_DESCRIPTIONS[requestedScope]
+                      ?? `使用「${requestedScope}」權限`}
+                  </span>
                 </li>
-              )}
-
-              {scopes.includes('profile') && (
-                <li>
-                  <CircleCheckIcon className="text-emerald-500" />
-                  存取你的基本個人資料
-                </li>
-              )}
-
-              {scopes.includes('email') && (
-                <li>
-                  <CircleCheckIcon className="text-emerald-500" />
-                  存取你的電子郵件地址
-                </li>
-              )}
+              ))}
             </ul>
           )}
 

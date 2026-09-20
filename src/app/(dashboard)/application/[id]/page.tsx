@@ -33,6 +33,8 @@ import {
   type OAuthApplicationType,
   validateOAuthRedirectUri,
 } from '@/lib/oauth-redirect-uri';
+import { ApplicationIconUpload } from './_components/application-icon-upload';
+import { OAuthUrlGenerator } from './_components/oauth-url-generator';
 
 type RotateClientSecretResult = { client_secret?: string };
 type RedirectUriField = { id: string; value: string };
@@ -217,6 +219,12 @@ export default function ApplicationPage() {
         </header>
 
         <form className="space-y-8" onSubmit={saveApplication}>
+          <ApplicationIconUpload
+            clientId={data.client_id}
+            clientName={currentName || '未命名應用程式'}
+            logoUri={data.logo_uri}
+          />
+
           <div className="space-y-2">
             <label className="font-medium text-sm" htmlFor="application-name">
               應用程式名稱
@@ -381,6 +389,11 @@ export default function ApplicationPage() {
             )}
           </div>
         </section>
+
+        <OAuthUrlGenerator
+          clientId={data.client_id}
+          redirectUris={currentRedirectUris}
+        />
       </main>
 
       <AlertDialog onOpenChange={setIsResetDialogOpen} open={isResetDialogOpen}>
