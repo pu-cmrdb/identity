@@ -1,6 +1,7 @@
 import { oauthProviderAuthServerMetadata } from '@better-auth/oauth-provider';
 
 import { auth } from '@/server/auth';
+import { withoutRegistrationEndpoint } from '@/server/auth/metadata';
 
 /**
  * OAuth 2.1 Authorization Server Metadata Endpoint
@@ -16,5 +17,9 @@ import { auth } from '@/server/auth';
  * 可以暫時新增以下標頭用於測試：
  * - `Access-Control-Allow-Methods: GET`
  * - `Access-Control-Allow-Origin: *`
+ *
+ * 動態客戶端註冊已關閉，因此移除元資料中的 `registration_endpoint`。
  */
-export const GET = oauthProviderAuthServerMetadata(auth);
+export const GET = withoutRegistrationEndpoint(
+  oauthProviderAuthServerMetadata(auth),
+);
