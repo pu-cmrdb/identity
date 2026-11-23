@@ -83,3 +83,32 @@ bun run dev         # http://localhost:3000
 - [ ] （暫緩，David 2026-11-23）原始碼中沒有固定的管理員密碼。
 - [ ] 只有 `admin` 角色可管理使用者、應用程式與 API key。
 - [ ] Better Auth 及其 plugin 使用一致且無已知漏洞的版本（與 ams 一致）。
+
+## 5. 本週驗收底稿（行雲司 2026-11-23）
+
+> 本節是本週的範圍與驗收基準。和 issue 內文衝突時，以本節為準。ams 端的完整底稿見 `pu-cmrdb/ams` 的 `docs/requirements.md` 第 5 節。
+
+### 5.1 流程限制
+
+- 不另外新增 Gate 1 workflow，也不修改社團既有 workflow。
+  - identity 目前沒有任何 workflow；P1 規劃的 CI workflow（lint、typecheck、build、test）是否屬於這條限制，待 David 確認後再開 PR。
+- 不合併、不部署；正式站（`iam.cmrdb.cs.pu.edu.tw`）不碰。
+- 優先順序：P0 → P6，依行雲司清單（見 5.4）。
+
+### 5.2 和 ams 有關的權限
+
+- ams 的角色權限預設：只有管理員能新增、修改、刪除財產、類別、盤點計畫，以及查看 identity 使用者名單。
+- identity 必須提供 ams 判斷「管理員」所需的資訊：session 或 OIDC claim 裡要帶 `role`；或由 ams 透過 API key 查詢。
+- 驗收：
+  - [ ] 本機 identity（3000）＋ ams（3001）下，`admin` 與一般 `user` 登入 ams 後，ams 能分辨兩者。
+
+### 5.3 本週不做
+
+- **預設管理員密碼與種子腳本修改**（David 2026-11-23 更正：先不管）。
+- 各 issue 中標為「第一版暫緩」的項目。
+
+本週照做：AGENTS.md／requirements.md、CI（見 5.1 待確認）、Better Auth 1.7.16、關閉動態客戶端註冊。每項合併前都要在本機以 ams 實測登入。
+
+### 5.4 P0–P6 優先順序
+
+依行雲司清單。清單內容收到後補在這裡。
