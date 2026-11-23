@@ -69,3 +69,32 @@ export function normalizeUsername(username: string): string {
     .trim()
     .replace(/[^a-z0-9_]/g, '_');
 }
+
+/**
+ * 判斷使用者角色是否包含指定角色
+ *
+ * Better Auth admin plugin 的 `role` 可能是單一角色，
+ * 也可能是以逗號分隔的多個角色（例如 `"user,admin"`）。
+ *
+ * @param role - 使用者的 `role` 欄位
+ * @param target - 要檢查的角色
+ * @returns 是否包含該角色
+ *
+ * @example
+ * ```typescript
+ * hasRole('admin', 'admin'); // true
+ * hasRole('user, admin', 'admin'); // true
+ * hasRole('user', 'admin'); // false
+ * ```
+ */
+export function hasRole(
+  role: string | null | undefined,
+  target: string,
+): boolean {
+  const normalizedTarget = target.trim();
+  if (!role || !normalizedTarget) {
+    return false;
+  }
+
+  return role.split(',').some((v) => v.trim() === normalizedTarget);
+}

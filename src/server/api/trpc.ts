@@ -14,6 +14,7 @@ import superjson from 'superjson';
 
 import { auth } from '@/server/auth';
 import { db } from '@/server/database';
+import { hasRole } from '@/server/auth/utils';
 
 /**
  * 1. CONTEXT
@@ -133,3 +134,15 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+/**
+ * Admin procedure
+ *
+ * 只允許角色包含 `admin` 的使用者呼叫；未登入回 `UNAUTHORIZED`，非管理員回 `FORBIDDEN`。
+ */
+export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+  if (!hasRole(ctx.session.user.role, 'admin')) {
+    throw new TRPCError({ code: 'FORBIDDEN' });
+  }
+  return next();
+});
