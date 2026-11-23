@@ -100,13 +100,11 @@ export const verifications = sqliteTable(
   (table) => [index('verifications_identifier_idx').on(table.identifier)],
 );
 
-export const audit_logs = sqliteTable(
+export const auditLogs = sqliteTable(
   'audit_logs',
   {
     action: text('action').notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-      .notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
     id: text('id').primaryKey(),
     ipAddress: text('ip_address'),
     metadata: text('metadata'),
@@ -118,9 +116,9 @@ export const audit_logs = sqliteTable(
     }),
   },
   (table) => [
-    index('audit_logs_userId_idx').on(table.userId),
-    index('audit_logs_action_idx').on(table.action),
-    index('audit_logs_createdAt_idx').on(table.createdAt),
+    index('auditLogs_userId_idx').on(table.userId),
+    index('auditLogs_action_idx').on(table.action),
+    index('auditLogs_createdAt_idx').on(table.createdAt),
   ],
 );
 
@@ -395,7 +393,7 @@ export const jwkss = sqliteTable('jwkss', {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
-  audit_logs: many(audit_logs),
+  auditLogs: many(auditLogs),
   oauthAccessTokens: many(oauthAccessTokens),
   oauthClients: many(oauthClients),
   oauthConsents: many(oauthConsents),
@@ -420,9 +418,9 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
   }),
 }));
 
-export const audit_logsRelations = relations(audit_logs, ({ one }) => ({
+export const auditLogsRelations = relations(auditLogs, ({ one }) => ({
   user: one(users, {
-    fields: [audit_logs.userId],
+    fields: [auditLogs.userId],
     references: [users.id],
   }),
 }));
