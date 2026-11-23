@@ -84,7 +84,7 @@ bun run dev         # http://localhost:3000
 - [ ] 只有 `admin` 角色可管理使用者、應用程式與 API key。
 - [ ] Better Auth 及其 plugin 使用一致且無已知漏洞的版本（與 ams 一致）。
 
-## 5. 本週驗收底稿（行雲司 2026-11-23）
+## 5. 本週驗收底稿（行雲司 2026-11-23；David 16:54 定案）
 
 > 本節是本週的範圍與驗收基準。和 issue 內文衝突時，以本節為準。ams 端的完整底稿見 `pu-cmrdb/ams` 的 `docs/requirements.md` 第 5 節。
 
@@ -97,14 +97,15 @@ bun run dev         # http://localhost:3000
 
 ### 5.2 和 ams 有關的權限
 
-- ams 的角色權限預設：只有管理員能新增、修改、刪除財產、類別、盤點計畫，以及查看 identity 使用者名單。
-- identity 必須提供 ams 判斷「管理員」所需的資訊：session 或 OIDC claim 裡要帶 `role`；或由 ams 透過 API key 查詢。
+- 角色沿用 identity 既有 admin plugin 的 `role`（`admin`／`user`），不新增角色名稱。
+- ams 的權限：只有 `admin` 能新增、修改、刪除財產、類別、盤點計畫，以及查看使用者名單；一般社員可以看財產、依規則出借、執行被分配的盤點。
+- ams 透過現有的 IAM API key 查詢使用者 `role`（或 OIDC claim）。identity 這邊不需要新增角色。
 - 驗收：
-  - [ ] 本機 identity（3000）＋ ams（3001）下，`admin` 與一般 `user` 登入 ams 後，ams 能分辨兩者。
+  - [ ] 本機 identity（3000）＋ ams（3001）下，`admin` 與 `user` 登入 ams 後，ams 能正確分辨兩者。
 
 ### 5.3 本週不做
 
-- **預設管理員密碼與種子腳本修改**（David 2026-11-23 更正：先不管）。
+- **預設管理員密碼與種子腳本修改**（David 2026-11-23 定案：本週不做）。
 - 各 issue 中標為「第一版暫緩」的項目。
 
 本週照做：AGENTS.md／requirements.md、CI（見 5.1 待確認）、Better Auth 1.7.16、關閉動態客戶端註冊。每項合併前都要在本機以 ams 實測登入。
