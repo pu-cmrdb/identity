@@ -29,7 +29,7 @@ describe('withoutRegistrationEndpoint', () => {
   test('成功回應時移除 registration_endpoint，並保留狀態碼與標頭', async () => {
     const handler = withoutRegistrationEndpoint(async () =>
       Response.json(metadata, {
-        headers: { 'cache-control': 'public, max-age=15' },
+        headers: { 'cache-control': 'public, max-age=15', 'content-length': '999' },
       }),
     );
 
@@ -38,6 +38,7 @@ describe('withoutRegistrationEndpoint', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('public, max-age=15');
+    expect(response.headers.get('content-length')).not.toBe('999');
     expect(body).not.toHaveProperty('registration_endpoint');
     expect(body.issuer).toBe(metadata.issuer);
   });
