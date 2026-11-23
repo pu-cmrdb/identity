@@ -19,7 +19,7 @@ describe('generatePassword', () => {
   });
 
   test('每次產生的密碼不同', () => {
-    const passwords = new Set(Array.from({ length: 50 }, generatePassword));
+    const passwords = new Set(Array.from({ length: 50 }, () => generatePassword()));
 
     expect(passwords.size).toBe(50);
   });

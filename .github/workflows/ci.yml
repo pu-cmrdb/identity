@@ -12,8 +12,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # 只自動取消 PR 上被新 commit 取代的執行；main 與 merge queue 不取消
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   # 只用假值，不需要任何 secrets
@@ -23,7 +24,7 @@ env:
   BETTER_AUTH_SECRET: dummy-secret-for-ci-at-least-32-chars
   BETTER_AUTH_DISCORD_CLIENT_ID: dummy-client-id
   BETTER_AUTH_DISCORD_CLIENT_SECRET: dummy-client-secret
-  DATABASE_URL: file:./data/ci.sqlite
+  DATABASE_URL: file:./ci.sqlite
 
 jobs:
   lint:
@@ -35,7 +36,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.5
 
       - uses: actions/cache@v5
         with:
@@ -64,7 +65,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.5
 
       - uses: actions/cache@v5
         with:
@@ -87,7 +88,7 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.5
 
       - uses: actions/cache@v5
         with:
