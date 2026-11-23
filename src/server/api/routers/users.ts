@@ -2,11 +2,11 @@ import { TRPCError } from '@trpc/server';
 import { count } from 'drizzle-orm';
 import { type } from 'arktype';
 
-import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc';
+import { adminProcedure, createTRPCRouter } from '@/server/api/trpc';
 import { db, schema } from '@/server/database';
 
 export const usersRouter = createTRPCRouter({
-  list: protectedProcedure
+  list: adminProcedure
     .input(
       type({
         'cursor?': 'number',
