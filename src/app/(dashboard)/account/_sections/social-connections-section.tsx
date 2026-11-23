@@ -31,7 +31,14 @@ export function SocialConnectionsSection() {
 
   const { isPending: isUnlinkingDiscord, mutate: unlinkDiscord } = useMutation({
     mutationFn: async () => {
-      const result = await authClient.unlinkAccount({ providerId: 'discord' });
+      const discordAccount = accounts?.find((v) => v.providerId === 'discord');
+      if (!discordAccount) {
+        return;
+      }
+
+      const result = await authClient.unlinkAccount({
+        accountId: discordAccount.id,
+      });
 
       if (result.error) {
         toast.error('解除連繫時發生錯誤', {
