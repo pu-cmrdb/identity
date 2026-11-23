@@ -24,4 +24,9 @@ describe('hasRole', () => {
     expect(hasRole(undefined, 'admin')).toBe(false);
     expect(hasRole('', 'admin')).toBe(false);
   });
+
+  test('空的 target 一律回傳 false（含尾隨逗號的角色）', () => {
+    expect(hasRole('admin,', '')).toBe(false);
+    expect(hasRole('admin', '  ')).toBe(false);
+  });
 });

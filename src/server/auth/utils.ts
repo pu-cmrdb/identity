@@ -91,12 +91,10 @@ export function hasRole(
   role: string | null | undefined,
   target: string,
 ): boolean {
-  if (!role) {
+  const normalizedTarget = target.trim();
+  if (!role || !normalizedTarget) {
     return false;
   }
 
-  return role
-    .split(',')
-    .map((v) => v.trim())
-    .includes(target);
+  return role.split(',').some((v) => v.trim() === normalizedTarget);
 }
