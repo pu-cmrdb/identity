@@ -66,7 +66,6 @@ CREATE TABLE `__new_accounts` (
 INSERT INTO `__new_accounts`("access_token", "access_token_expires_at", "account_id", "created_at", "id", "id_token", "password", "provider_id", "refresh_token", "refresh_token_expires_at", "scope", "updated_at", "user_id") SELECT "access_token", "access_token_expires_at", "account_id", "created_at", "id", "id_token", "password", "provider_id", "refresh_token", "refresh_token_expires_at", "scope", "updated_at", "user_id" FROM `accounts`;--> statement-breakpoint
 DROP TABLE `accounts`;--> statement-breakpoint
 ALTER TABLE `__new_accounts` RENAME TO `accounts`;--> statement-breakpoint
-PRAGMA foreign_keys=ON;--> statement-breakpoint
 CREATE INDEX `accounts_userId_idx` ON `accounts` (`user_id`);--> statement-breakpoint
 CREATE TABLE `__new_audit_logs` (
 	`action` text NOT NULL,
@@ -137,6 +136,7 @@ CREATE TABLE `__new_verifications` (
 INSERT INTO `__new_verifications`("created_at", "expires_at", "id", "identifier", "updated_at", "value") SELECT "created_at", "expires_at", "id", "identifier", "updated_at", "value" FROM `verifications`;--> statement-breakpoint
 DROP TABLE `verifications`;--> statement-breakpoint
 ALTER TABLE `__new_verifications` RENAME TO `verifications`;--> statement-breakpoint
+PRAGMA foreign_keys=ON;--> statement-breakpoint
 CREATE INDEX `verifications_identifier_idx` ON `verifications` (`identifier`);--> statement-breakpoint
 ALTER TABLE `jwkss` ADD `alg` text;--> statement-breakpoint
 ALTER TABLE `jwkss` ADD `crv` text;--> statement-breakpoint

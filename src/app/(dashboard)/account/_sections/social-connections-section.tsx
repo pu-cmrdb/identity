@@ -33,6 +33,7 @@ export function SocialConnectionsSection() {
     mutationFn: async () => {
       const discordAccount = accounts?.find((v) => v.providerId === 'discord');
       if (!discordAccount) {
+        toast.error('找不到已連結的 Discord 帳號');
         return;
       }
 
