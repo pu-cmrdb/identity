@@ -35,7 +35,7 @@ export const auth = betterAuth({
     }),
     auditLog(),
     oauthProvider({
-      allowDynamicClientRegistration: true,
+      allowDynamicClientRegistration: false,
       consentPage: '/oauth2/authorize',
       loginPage: '/login',
       scopes: ['openid', 'profile', 'email', 'offline_access'],
