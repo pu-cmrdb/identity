@@ -67,6 +67,7 @@ if (existingAmsClient) {
   try {
     const { client_id, client_secret } = await auth.api.adminCreateOAuthClient({
       body: {
+        application_type: 'web',
         client_name: amsClientName,
         client_uri: 'https://ams.cmrdb.cs.pu.edu.tw',
         enable_end_session: true,
@@ -81,7 +82,6 @@ if (existingAmsClient) {
         ],
         scope: 'openid profile email offline_access',
         skip_consent: false,
-        type: 'web',
       },
     });
 

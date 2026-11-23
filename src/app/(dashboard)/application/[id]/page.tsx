@@ -82,7 +82,7 @@ export default function ApplicationPage() {
     }
 
     const applicationType: OAuthApplicationType =
-      data?.type === 'native' ? 'native' : 'web';
+      data?.application_type === 'native' ? 'native' : 'web';
     const nextRedirectUris = (
       redirectUriFields?.map(({ value }) => value)
       ?? data?.redirect_uris
@@ -193,7 +193,9 @@ export default function ApplicationPage() {
 
   const currentName = name ?? data.client_name ?? '';
   const applicationType: OAuthApplicationType =
-    data.type === 'native' ? 'native' : 'web';
+    data.application_type === 'native' ? 'native' : 'web';
+  /** 公開客戶端（不使用 client secret） */
+  const isPublicClient = data.token_endpoint_auth_method === 'none';
   const currentRedirectUriFields =
     redirectUriFields
     ?? data.redirect_uris.map((value) => ({ id: `existing:${value}`, value }));
@@ -396,7 +398,7 @@ export default function ApplicationPage() {
                 </Button>
               )}
               <Button
-                disabled={data.public || isResetting}
+                disabled={isPublicClient || isResetting}
                 onClick={() => setIsResetDialogOpen(true)}
                 type="button"
                 variant="destructive"
@@ -405,7 +407,7 @@ export default function ApplicationPage() {
                 重設 Token
               </Button>
             </div>
-            {data.public && (
+            {isPublicClient && (
               <p className="text-muted-foreground text-xs">
                 公開應用程式不能使用客戶端 Token。
               </p>

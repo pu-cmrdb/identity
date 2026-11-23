@@ -96,11 +96,11 @@ export function CreateApplicationButton() {
     }
 
     const result = await authClient.oauth2.createClient({
+      application_type: data.applicationType,
       client_name: data.name.trim(),
       redirect_uris: uris,
       token_endpoint_auth_method:
         data.clientAuthentication === 'public' ? 'none' : 'client_secret_basic',
-      type: data.applicationType,
     });
 
     if (result.error) {
